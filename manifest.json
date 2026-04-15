@@ -1,13 +1,13 @@
 {
   "name": "Pulse Fast",
-  "short_name": "PulseFast",
+  "short_name": "Pulse",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#070b11",
-  "theme_color": "#0d1117",
-  "description": "Tracker personale per digiuno, acqua, peso, energia e allenamento.",
+  "background_color": "#08101d",
+  "theme_color": "#0b1220",
+  "description": "Tracker personale per digiuno, dieta, allenamento e benessere.",
   "icons": [
     {
       "src": "icon-192.png",
