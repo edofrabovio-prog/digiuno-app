@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00ffcc">
+
+<title>Digiuno App</title>
+
+<style>
+body {
+  margin:0;
+  font-family:-apple-system;
+  background:#0f0f0f;
+  color:white;
+}
+
+.header {
+  text-align:center;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  color:#00ffcc;
+}
+
+.card {
+  margin:12px;
+  padding:15px;
+  background:#1e1e1e;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(0,255,200,0.2);
+}
+
+button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:#00ffcc;
+  font-weight:bold;
+}
+
+.progress {
+  height:10px;
+  background:#333;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.bar {
+  height:100%;
+  background:#00ffcc;
+  width:0%;
+  transition:0.5s;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">🔥 Digiuno</div>
+
+<div class="card">
+<p id="timer">Non attivo</p>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<button onclick="startFast()">Start</button>
+<button onclick="stopFast()">Stop</button>
+</div>
+
+<div class="card">
+<button onclick="addWater()">💧 +0.25L</button>
+<p id="water"></p>
+</div>
+
+<div class="card">
+<input id="calories" placeholder="Calorie">
+<input id="weight" placeholder="Peso">
+<button onclick="save()">Salva</button>
+</div>
+
+<script>
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register('service-worker.js');
+}
+
+let start = localStorage.getItem("fast");
+
+function startFast(){
+ start = Date.now();
+ localStorage.setItem("fast",start);
+}
+
+function stopFast(){
+ localStorage.removeItem("fast");
+}
+
+function update(){
+ if(!start) return;
+ let h = (Date.now()-start)/3600000;
+ document.getElementById("timer").innerText = h.toFixed(1)+" / 20h";
+ document.getElementById("bar").style.width = (h/20*100)+"%";
+}
+setInterval(update,1000);
+
+function addWater(){
+ let w = Number(localStorage.getItem("water")||0)+0.25;
+ localStorage.setItem("water",w);
+ document.getElementById("water").innerText=w+"L";
+}
+
+function save(){
+ localStorage.setItem("calories",document.getElementById("calories").value);
+ localStorage.setItem("weight",document.getElementById("weight").value);
+ alert("Salvato");
+}
+
+document.getElementById("water").innerText =
+ (localStorage.getItem("water")||0)+"L";
+</script>
+
+</body>
+</html>
