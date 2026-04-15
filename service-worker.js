@@ -1,5 +1,6 @@
-const CACHE_NAME = "pulse-fast-v1";
-const APP_FILES = [
+const CACHE_NAME = "pulse-fast-v2";
+
+const APP_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
@@ -8,13 +9,17 @@ const APP_FILES = [
   "./icon-512.png"
 ];
 
+// INSTALL
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_FILES))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(APP_ASSETS);
+    })
   );
   self.skipWaiting();
 });
 
+// ACTIVATE
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -28,24 +33,28 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// FETCH (cache-first + update)
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request)
+    caches.match(event.request).then((cached) => {
+      const fetchPromise = fetch(event.request)
         .then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200) {
+            return networkResponse;
+          }
+
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
           });
+
           return networkResponse;
         })
-        .catch(() => caches.match("./index.html"));
+        .catch(() => cached);
+
+      return cached || fetchPromise;
     })
   );
 });
