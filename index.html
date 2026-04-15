@@ -1,125 +1,1317 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  />
+  <title>Pulse Fast</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#00ffcc">
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pulse Fast" />
 
-<title>Digiuno App</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-body {
-  margin:0;
-  font-family:-apple-system;
-  background:#0f0f0f;
-  color:white;
-}
+  <style>
+    :root {
+      --bg: #070b11;
+      --bg-soft: #0d1117;
+      --card: rgba(255, 255, 255, 0.07);
+      --card-strong: rgba(255, 255, 255, 0.1);
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #f5f7fb;
+      --muted: #9aa4b2;
+      --green: #3ddc97;
+      --green-2: #1fbf75;
+      --blue: #5ac8fa;
+      --orange: #ff9f0a;
+      --red: #ff5f57;
+      --purple: #8b7cff;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+      --radius-sm: 18px;
+      --blur: saturate(140%) blur(14px);
+    }
 
-.header {
-  text-align:center;
-  padding:15px;
-  font-size:22px;
-  font-weight:bold;
-  color:#00ffcc;
-}
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-.card {
-  margin:12px;
-  padding:15px;
-  background:#1e1e1e;
-  border-radius:15px;
-  box-shadow:0 0 10px rgba(0,255,200,0.2);
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top left, rgba(61,220,151,0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(90,200,250,0.12), transparent 22%),
+        linear-gradient(180deg, #091018 0%, #070b11 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+      min-height: 100%;
+    }
 
-button {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background:#00ffcc;
-  font-weight:bold;
-}
+    body {
+      padding: env(safe-area-inset-top) 18px env(safe-area-inset-bottom) 18px;
+    }
 
-.progress {
-  height:10px;
-  background:#333;
-  border-radius:10px;
-  overflow:hidden;
-}
+    .app-shell {
+      max-width: 460px;
+      margin: 0 auto;
+      padding-bottom: 30px;
+    }
 
-.bar {
-  height:100%;
-  background:#00ffcc;
-  width:0%;
-  transition:0.5s;
-}
-</style>
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 4px 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(61,220,151,0.35), rgba(90,200,250,0.25));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      font-size: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      height: 42px;
+      min-width: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      cursor: pointer;
+      backdrop-filter: var(--blur);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 22px;
+      background:
+        linear-gradient(145deg, rgba(61,220,151,0.17), rgba(90,200,250,0.08)),
+        rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--blur);
+      margin-top: 8px;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(30px);
+      opacity: 0.7;
+    }
+
+    .hero::before {
+      width: 160px;
+      height: 160px;
+      right: -30px;
+      top: -50px;
+      background: rgba(61,220,151,0.16);
+    }
+
+    .hero::after {
+      width: 120px;
+      height: 120px;
+      left: -20px;
+      bottom: -30px;
+      background: rgba(90,200,250,0.12);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hero h2 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #d6deea;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 28ch;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      font-size: 11px;
+      color: #eaf4ff;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-art {
+      min-height: 170px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 70% 20%, rgba(255,255,255,0.2), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .art-stack {
+      position: relative;
+      width: 150px;
+      height: 150px;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+      animation: floaty 4.6s ease-in-out infinite;
+      font-size: 26px;
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .bubble.one {
+      width: 74px;
+      height: 74px;
+      left: 8px;
+      top: 42px;
+      background: linear-gradient(145deg, rgba(61,220,151,0.24), rgba(61,220,151,0.12));
+    }
+
+    .bubble.two {
+      width: 82px;
+      height: 82px;
+      right: 0;
+      top: 0;
+      animation-delay: .5s;
+      background: linear-gradient(145deg, rgba(90,200,250,0.22), rgba(90,200,250,0.08));
+    }
+
+    .bubble.three {
+      width: 78px;
+      height: 78px;
+      right: 14px;
+      bottom: 8px;
+      animation-delay: 1s;
+      background: linear-gradient(145deg, rgba(255,159,10,0.22), rgba(255,159,10,0.08));
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 4px 10px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-title span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--blur);
+    }
+
+    .card-pad {
+      padding: 18px;
+    }
+
+    .small-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    .sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .fast-card {
+      margin-top: 14px;
+      padding: 18px;
+    }
+
+    .fast-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ring-wrap {
+      width: 110px;
+      height: 110px;
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .ring-wrap svg {
+      width: 110px;
+      height: 110px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .ring-center strong {
+      display: block;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .ring-center span {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .progress-row {
+      margin-top: 16px;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      transition: width 0.45s ease;
+      box-shadow: 0 0 25px rgba(61,220,151,0.35);
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform .16s ease, opacity .16s ease, box-shadow .16s ease;
+    }
+
+    button:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary {
+      color: #04110a;
+      background: linear-gradient(135deg, #45e6a2, #2fd68d);
+      box-shadow: 0 10px 24px rgba(61,220,151,0.22);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--line);
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .mini-card {
+      padding: 18px;
+      min-height: 145px;
+    }
+
+    .icon-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .green-bg { background: rgba(61,220,151,0.14); }
+    .blue-bg { background: rgba(90,200,250,0.14); }
+    .orange-bg { background: rgba(255,159,10,0.14); }
+    .red-bg { background: rgba(255,95,87,0.14); }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .stepper button {
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      border-radius: 14px;
+      font-size: 20px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .stepper-value {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .stepper-unit {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .habit-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .habit-chip {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 13px 12px;
+      border-radius: 16px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .habit-chip.active {
+      background: linear-gradient(135deg, rgba(61,220,151,0.22), rgba(61,220,151,0.12));
+      border-color: rgba(61,220,151,0.3);
+      box-shadow: 0 10px 22px rgba(61,220,151,0.12);
+    }
+
+    .form-card {
+      margin-top: 14px;
+      padding: 18px;
+    }
+
+    .fields {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 0 14px;
+      min-height: 54px;
+    }
+
+    .input-wrap span {
+      color: var(--muted);
+      font-size: 14px;
+      margin-right: 8px;
+    }
+
+    .input-wrap input[type="number"],
+    .input-wrap input[type="text"] {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 17px;
+      font-family: inherit;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+    }
+
+    .energy-row {
+      margin-top: 4px;
+    }
+
+    .energy-scale {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .save-btn {
+      margin-top: 14px;
+      width: 100%;
+      padding: 16px;
+      border-radius: 18px;
+      color: #05120b;
+      background: linear-gradient(135deg, #4ce7a7, #5ac8fa);
+      box-shadow: 0 14px 34px rgba(61,220,151,0.18);
+    }
+
+    .wide-card {
+      margin-top: 14px;
+      padding: 18px;
+    }
+
+    .goal-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .goal-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .goal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .goal-top strong {
+      font-size: 14px;
+    }
+
+    .goal-top span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .tiny-progress {
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .tiny-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width .35s ease;
+    }
+
+    .fill-green { background: linear-gradient(90deg, var(--green), #7ef0bf); }
+    .fill-blue { background: linear-gradient(90deg, var(--blue), #90dcff); }
+    .fill-orange { background: linear-gradient(90deg, var(--orange), #ffbf5a); }
+    .fill-purple { background: linear-gradient(90deg, var(--purple), #b2a7ff); }
+
+    .chart-card canvas {
+      margin-top: 10px;
+      width: 100% !important;
+      max-height: 240px !important;
+    }
+
+    .motivation {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .motivation-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      background: linear-gradient(145deg, rgba(139,124,255,0.2), rgba(90,200,250,0.1));
+      border: 1px solid var(--line);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(24px);
+      background: rgba(17, 24, 39, 0.95);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 50;
+      box-shadow: var(--shadow);
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .bottom-space {
+      height: 18px;
+    }
+
+    @media (max-width: 380px) {
+      .hero-grid,
+      .stats-grid,
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero p {
+        max-width: none;
+      }
+
+      .ring-wrap {
+        margin: 0 auto;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-badge">⚡</div>
+        <div>
+          <h1>Pulse Fast</h1>
+          <p>Tracker personale digiuno & benessere</p>
+        </div>
+      </div>
+      <button class="ghost-btn" onclick="showToast('Dati salvati in locale sul dispositivo')">i</button>
+    </div>
 
-<div class="header">🔥 Digiuno</div>
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <h2>Più controllo, meno caos.</h2>
+          <p>
+            Digiuno, acqua, peso, energia, allenamento e sigarette: tutto in un’unica dashboard elegante e chiara.
+          </p>
+          <div class="hero-tags">
+            <div class="tag">20:4 tracking</div>
+            <div class="tag">progressi giornalieri</div>
+            <div class="tag">motivazione live</div>
+          </div>
+        </div>
 
-<div class="card">
-<p id="timer">Non attivo</p>
-<div class="progress"><div id="bar" class="bar"></div></div>
-<button onclick="startFast()">Start</button>
-<button onclick="stopFast()">Stop</button>
-</div>
+        <div class="hero-art">
+          <div class="art-stack">
+            <div class="bubble one">💧</div>
+            <div class="bubble two">🏃</div>
+            <div class="bubble three">🥗</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<div class="card">
-<button onclick="addWater()">💧 +0.25L</button>
-<p id="water"></p>
-</div>
+    <div class="section-title">
+      <h3>Oggi</h3>
+      <span id="todayLabel"></span>
+    </div>
 
-<div class="card">
-<input id="calories" placeholder="Calorie">
-<input id="weight" placeholder="Peso">
-<button onclick="save()">Salva</button>
-</div>
+    <section class="stats-grid">
+      <div class="card">
+        <div class="card-pad">
+          <span class="small-label">Streak attuale</span>
+          <p class="value" id="streakValue">0</p>
+          <div class="sub">giorni coerenti consecutivi</div>
+        </div>
+      </div>
 
-<script>
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register('service-worker.js');
-}
+      <div class="card">
+        <div class="card-pad">
+          <span class="small-label">Punteggio giornaliero</span>
+          <p class="value" id="scoreValue">0</p>
+          <div class="sub">su 100 punti possibili</div>
+        </div>
+      </div>
+    </section>
 
-let start = localStorage.getItem("fast");
+    <section class="card fast-card">
+      <div class="fast-top">
+        <div>
+          <span class="small-label">Digiuno attivo</span>
+          <p class="value" id="fastHours">0.0h</p>
+          <div class="sub" id="fastStatus">Pronto a iniziare</div>
+        </div>
 
-function startFast(){
- start = Date.now();
- localStorage.setItem("fast",start);
-}
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.08)" stroke-width="10" fill="none"></circle>
+            <circle
+              id="ringProgress"
+              cx="60"
+              cy="60"
+              r="50"
+              stroke="url(#ringGradient)"
+              stroke-width="10"
+              stroke-linecap="round"
+              fill="none"
+              stroke-dasharray="314.159"
+              stroke-dashoffset="314.159"
+            ></circle>
+            <defs>
+              <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3ddc97"></stop>
+                <stop offset="100%" stop-color="#5ac8fa"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="ring-center">
+            <div>
+              <strong id="ringPercent">0%</strong>
+              <span>completato</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-function stopFast(){
- localStorage.removeItem("fast");
-}
+      <div class="progress-row">
+        <div class="progress-head">
+          <span>Obiettivo: 20 ore</span>
+          <span id="fastCountdown">20h rimanenti</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="fastBar"></div>
+        </div>
+      </div>
 
-function update(){
- if(!start) return;
- let h = (Date.now()-start)/3600000;
- document.getElementById("timer").innerText = h.toFixed(1)+" / 20h";
- document.getElementById("bar").style.width = (h/20*100)+"%";
-}
-setInterval(update,1000);
+      <div class="action-row">
+        <button class="btn-primary" onclick="startFast()">Inizia digiuno</button>
+        <button class="btn-secondary" onclick="stopFast()">Termina</button>
+      </div>
+    </section>
 
-function addWater(){
- let w = Number(localStorage.getItem("water")||0)+0.25;
- localStorage.setItem("water",w);
- document.getElementById("water").innerText=w+"L";
-}
+    <section class="panel-grid">
+      <div class="card mini-card">
+        <div class="icon-pill blue-bg">💧</div>
+        <span class="small-label">Acqua</span>
+        <div class="stepper">
+          <button onclick="changeWater(-0.25)">−</button>
+          <div>
+            <div class="stepper-value" id="waterValue">0.00</div>
+            <div class="stepper-unit">litri oggi</div>
+          </div>
+          <button onclick="changeWater(0.25)">+</button>
+        </div>
+      </div>
 
-function save(){
- localStorage.setItem("calories",document.getElementById("calories").value);
- localStorage.setItem("weight",document.getElementById("weight").value);
- alert("Salvato");
-}
+      <div class="card mini-card">
+        <div class="icon-pill red-bg">🚬</div>
+        <span class="small-label">Sigarette</span>
+        <div class="stepper">
+          <button onclick="changeSmokes(-1)">−</button>
+          <div>
+            <div class="stepper-value" id="smokesValue">0</div>
+            <div class="stepper-unit">consumate oggi</div>
+          </div>
+          <button onclick="changeSmokes(1)">+</button>
+        </div>
+      </div>
+    </section>
 
-document.getElementById("water").innerText =
- (localStorage.getItem("water")||0)+"L";
-</script>
+    <section class="card form-card">
+      <span class="small-label">Allenamento</span>
+      <div class="habit-row">
+        <button id="cardioBtn" class="habit-chip" onclick="toggleHabit('cardio')">🏃 Cardio</button>
+        <button id="weightsBtn" class="habit-chip" onclick="toggleHabit('weights')">🏋️ Pesi</button>
+      </div>
 
+      <div class="fields">
+        <div class="field">
+          <label for="weightInput">Peso</label>
+          <div class="input-wrap">
+            <span>⚖️</span>
+            <input id="weightInput" type="number" step="0.1" placeholder="es. 74.8" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="caloriesInput">Calorie totali</label>
+          <div class="input-wrap">
+            <span>🔥</span>
+            <input id="caloriesInput" type="number" step="1" placeholder="es. 1550" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="energyInput">Energia percepita</label>
+          <div class="energy-row">
+            <input id="energyInput" type="range" min="1" max="10" value="5" />
+            <div class="energy-scale">
+              <span>scarso</span>
+              <span id="energyValue">5/10</span>
+              <span>ottimo</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="save-btn" onclick="saveDay()">Salva giornata</button>
+      </div>
+    </section>
+
+    <section class="card wide-card">
+      <div class="section-title" style="margin:0 0 8px;">
+        <h3>Obiettivi giornalieri</h3>
+        <span>focus visivo</span>
+      </div>
+
+      <div class="goal-list">
+        <div class="goal-item">
+          <div class="goal-top">
+            <strong>Idratazione</strong>
+            <span id="goalWaterText">0 / 2.0 L</span>
+          </div>
+          <div class="tiny-progress"><div class="tiny-fill fill-blue" id="goalWaterFill"></div></div>
+        </div>
+
+        <div class="goal-item">
+          <div class="goal-top">
+            <strong>Calorie target</strong>
+            <span id="goalCaloriesText">—</span>
+          </div>
+          <div class="tiny-progress"><div class="tiny-fill fill-orange" id="goalCaloriesFill"></div></div>
+        </div>
+
+        <div class="goal-item">
+          <div class="goal-top">
+            <strong>Fumo contenuto</strong>
+            <span id="goalSmokesText">0 / 5 max</span>
+          </div>
+          <div class="tiny-progress"><div class="tiny-fill fill-purple" id="goalSmokesFill"></div></div>
+        </div>
+
+        <div class="goal-item">
+          <div class="goal-top">
+            <strong>Allenamento</strong>
+            <span id="goalWorkoutText">0 / 2 attività</span>
+          </div>
+          <div class="tiny-progress"><div class="tiny-fill fill-green" id="goalWorkoutFill"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card wide-card chart-card">
+      <div class="section-title" style="margin:0 0 8px;">
+        <h3>Andamento peso</h3>
+        <span>storico locale</span>
+      </div>
+      <canvas id="weightChart"></canvas>
+
+      <div class="motivation">
+        <div class="motivation-badge">✨</div>
+        <div>
+          <div class="small-label" style="margin-bottom:4px;">Messaggio del giorno</div>
+          <div id="motivationText" style="line-height:1.45; font-size:14px;">
+            Costanza batte intensità. Continua così.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-space"></div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    }
+
+    const STORAGE_KEYS = {
+      fastStart: "pulsefast_fastStart",
+      water: "pulsefast_water",
+      smokes: "pulsefast_smokes",
+      cardio: "pulsefast_cardio",
+      weights: "pulsefast_weights",
+      calories: "pulsefast_calories",
+      energy: "pulsefast_energy",
+      score: "pulsefast_score",
+      streak: "pulsefast_streak",
+      lastSavedDate: "pulsefast_lastSavedDate",
+      weightsHistory: "pulsefast_weightsHistory"
+    };
+
+    let chart;
+
+    function getTodayKey() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function formatTodayLabel() {
+      const d = new Date();
+      const days = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
+      const months = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+      return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+    }
+
+    function getNumber(key, fallback = 0) {
+      const val = localStorage.getItem(key);
+      return val === null || val === "" ? fallback : Number(val);
+    }
+
+    function getBool(key) {
+      return localStorage.getItem(key) === "true";
+    }
+
+    function setBool(key, value) {
+      localStorage.setItem(key, value ? "true" : "false");
+    }
+
+    function getWeightsHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.weightsHistory) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveWeightsHistory(list) {
+      localStorage.setItem(STORAGE_KEYS.weightsHistory, JSON.stringify(list));
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    function updateToday() {
+      document.getElementById("todayLabel").textContent = formatTodayLabel();
+    }
+
+    function updateEnergyLabel() {
+      const energy = document.getElementById("energyInput").value;
+      document.getElementById("energyValue").textContent = `${energy}/10`;
+    }
+
+    function updateHabitButtons() {
+      const cardio = getBool(STORAGE_KEYS.cardio);
+      const weights = getBool(STORAGE_KEYS.weights);
+
+      document.getElementById("cardioBtn").classList.toggle("active", cardio);
+      document.getElementById("weightsBtn").classList.toggle("active", weights);
+    }
+
+    function toggleHabit(type) {
+      const key = type === "cardio" ? STORAGE_KEYS.cardio : STORAGE_KEYS.weights;
+      const current = getBool(key);
+      setBool(key, !current);
+      updateHabitButtons();
+      updateGoalsAndScore();
+    }
+
+    function changeWater(delta) {
+      let value = Math.max(0, getNumber(STORAGE_KEYS.water) + delta);
+      value = Math.round(value * 100) / 100;
+      localStorage.setItem(STORAGE_KEYS.water, value);
+      renderQuickValues();
+      updateGoalsAndScore();
+    }
+
+    function changeSmokes(delta) {
+      let value = Math.max(0, getNumber(STORAGE_KEYS.smokes) + delta);
+      localStorage.setItem(STORAGE_KEYS.smokes, value);
+      renderQuickValues();
+      updateGoalsAndScore();
+    }
+
+    function renderQuickValues() {
+      document.getElementById("waterValue").textContent = getNumber(STORAGE_KEYS.water).toFixed(2);
+      document.getElementById("smokesValue").textContent = getNumber(STORAGE_KEYS.smokes).toFixed(0);
+    }
+
+    function startFast() {
+      localStorage.setItem(STORAGE_KEYS.fastStart, Date.now());
+      updateFastUI();
+      showToast("Digiuno avviato");
+    }
+
+    function stopFast() {
+      localStorage.removeItem(STORAGE_KEYS.fastStart);
+      updateFastUI();
+      showToast("Digiuno terminato");
+    }
+
+    function updateFastUI() {
+      const start = Number(localStorage.getItem(STORAGE_KEYS.fastStart) || 0);
+      const ring = document.getElementById("ringProgress");
+      const circumference = 314.159;
+
+      if (!start) {
+        document.getElementById("fastHours").textContent = "0.0h";
+        document.getElementById("fastStatus").textContent = "Pronto a iniziare";
+        document.getElementById("ringPercent").textContent = "0%";
+        document.getElementById("fastCountdown").textContent = "20h rimanenti";
+        document.getElementById("fastBar").style.width = "0%";
+        ring.style.strokeDashoffset = circumference;
+        return;
+      }
+
+      const diffHours = (Date.now() - start) / 3600000;
+      const progress = Math.min(diffHours / 20, 1);
+      const percent = Math.round(progress * 100);
+      const remaining = Math.max(0, 20 - diffHours);
+
+      document.getElementById("fastHours").textContent = `${diffHours.toFixed(1)}h`;
+      document.getElementById("fastStatus").textContent =
+        progress >= 1 ? "Obiettivo raggiunto" : "Sei in pieno controllo";
+      document.getElementById("ringPercent").textContent = `${percent}%`;
+      document.getElementById("fastCountdown").textContent =
+        progress >= 1 ? "finestra completata" : `${remaining.toFixed(1)}h rimanenti`;
+      document.getElementById("fastBar").style.width = `${percent}%`;
+
+      const offset = circumference * (1 - progress);
+      ring.style.strokeDashoffset = offset;
+    }
+
+    function updateGoalsAndScore() {
+      const water = getNumber(STORAGE_KEYS.water);
+      const smokes = getNumber(STORAGE_KEYS.smokes);
+      const calories = Number(document.getElementById("caloriesInput").value || localStorage.getItem(STORAGE_KEYS.calories) || 0);
+      const cardio = getBool(STORAGE_KEYS.cardio);
+      const weights = getBool(STORAGE_KEYS.weights);
+
+      const workoutCount = (cardio ? 1 : 0) + (weights ? 1 : 0);
+
+      const waterPct = Math.min((water / 2) * 100, 100);
+      document.getElementById("goalWaterText").textContent = `${water.toFixed(2)} / 2.0 L`;
+      document.getElementById("goalWaterFill").style.width = `${waterPct}%`;
+
+      let caloriesPct = 0;
+      let caloriesText = "inserisci calorie";
+      if (calories > 0) {
+        const min = 1400;
+        const max = 1700;
+        if (calories >= min && calories <= max) {
+          caloriesPct = 100;
+        } else if (calories < min) {
+          caloriesPct = Math.max(15, (calories / min) * 100);
+        } else {
+          caloriesPct = Math.max(15, (max / calories) * 100);
+        }
+        caloriesText = `${calories} kcal`;
+      }
+      document.getElementById("goalCaloriesText").textContent = caloriesText;
+      document.getElementById("goalCaloriesFill").style.width = `${Math.min(caloriesPct, 100)}%`;
+
+      const smokePct = Math.max(0, Math.min(((5 - smokes) / 5) * 100, 100));
+      document.getElementById("goalSmokesText").textContent = `${smokes} / 5 max`;
+      document.getElementById("goalSmokesFill").style.width = `${smokePct}%`;
+
+      const workoutPct = (workoutCount / 2) * 100;
+      document.getElementById("goalWorkoutText").textContent = `${workoutCount} / 2 attività`;
+      document.getElementById("goalWorkoutFill").style.width = `${workoutPct}%`;
+
+      let score = 0;
+      if (water >= 2) score += 25;
+      if (calories >= 1400 && calories <= 1700) score += 25;
+      if (smokes <= 5) score += 25;
+      if (workoutCount >= 1) score += 12;
+      if (workoutCount === 2) score += 13;
+
+      localStorage.setItem(STORAGE_KEYS.score, score);
+      document.getElementById("scoreValue").textContent = score;
+
+      updateMotivation(score, water, smokes, workoutCount, calories);
+    }
+
+    function updateMotivation(score, water, smokes, workoutCount, calories) {
+      const messages = [];
+
+      if (score >= 85) messages.push("Giornata eccellente: stai costruendo una routine forte e sostenibile.");
+      if (score >= 60 && score < 85) messages.push("Stai andando bene: con un piccolo sforzo in più chiudi la giornata in ottimo modo.");
+      if (score < 60) messages.push("Non serve perfezione: punta a sistemare una sola cosa per volta e continua.");
+
+      if (water < 2) messages.push("Un po’ più di acqua oggi ti aiuterà anche con fame e lucidità.");
+      if (smokes > 5) messages.push("Ridurre anche di poco le sigarette migliora respiro, energia e allenamento.");
+      if (workoutCount === 0) messages.push("Anche solo 15–20 minuti di movimento oggi contano davvero.");
+      if (calories > 0 && calories < 1400) messages.push("Non tagliare troppo: dimagrire meglio è più importante che dimagrire in fretta.");
+
+      const text = messages[0] || "Costanza batte intensità. Continua così.";
+      document.getElementById("motivationText").textContent = text;
+    }
+
+    function saveDay() {
+      const weight = document.getElementById("weightInput").value;
+      const calories = document.getElementById("caloriesInput").value;
+      const energy = document.getElementById("energyInput").value;
+      const today = getTodayKey();
+
+      if (calories) localStorage.setItem(STORAGE_KEYS.calories, calories);
+      if (energy) localStorage.setItem(STORAGE_KEYS.energy, energy);
+
+      if (weight) {
+        const history = getWeightsHistory();
+        const existingIndex = history.findIndex(item => item.date === today);
+        const entry = { date: today, value: Number(weight) };
+
+        if (existingIndex >= 0) history[existingIndex] = entry;
+        else history.push(entry);
+
+        history.sort((a, b) => a.date.localeCompare(b.date));
+        saveWeightsHistory(history);
+      }
+
+      const score = Number(localStorage.getItem(STORAGE_KEYS.score) || 0);
+      const previousDate = localStorage.getItem(STORAGE_KEYS.lastSavedDate);
+      let streak = Number(localStorage.getItem(STORAGE_KEYS.streak) || 0);
+
+      if (score >= 60) {
+        if (previousDate === today) {
+          // stesso giorno, non cambiare streak
+        } else {
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,"0")}-${String(yesterday.getDate()).padStart(2,"0")}`;
+
+          streak = previousDate === yKey ? streak + 1 : 1;
+          localStorage.setItem(STORAGE_KEYS.streak, streak);
+          localStorage.setItem(STORAGE_KEYS.lastSavedDate, today);
+        }
+      }
+
+      renderHistoryChart();
+      renderStreak();
+      updateGoalsAndScore();
+      showToast("Giornata salvata");
+    }
+
+    function renderStreak() {
+      document.getElementById("streakValue").textContent = Number(localStorage.getItem(STORAGE_KEYS.streak) || 0);
+    }
+
+    function renderInputsFromStorage() {
+      const calories = localStorage.getItem(STORAGE_KEYS.calories) || "";
+      const energy = localStorage.getItem(STORAGE_KEYS.energy) || "5";
+
+      document.getElementById("caloriesInput").value = calories;
+      document.getElementById("energyInput").value = energy;
+      updateEnergyLabel();
+
+      const history = getWeightsHistory();
+      const today = getTodayKey();
+      const todayWeight = history.find(item => item.date === today);
+      document.getElementById("weightInput").value = todayWeight ? todayWeight.value : "";
+    }
+
+    function renderHistoryChart() {
+      const history = getWeightsHistory().slice(-10);
+      const ctx = document.getElementById("weightChart").getContext("2d");
+
+      const labels = history.map(item => item.date.slice(5));
+      const values = history.map(item => item.value);
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            tension: 0.35,
+            fill: true,
+            borderWidth: 3,
+            borderColor: "#3ddc97",
+            backgroundColor: "rgba(61, 220, 151, 0.14)",
+            pointRadius: 4,
+            pointHoverRadius: 4,
+            pointBackgroundColor: "#5ac8fa",
+            pointBorderColor: "#5ac8fa"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(10,14,20,0.95)",
+              borderColor: "rgba(255,255,255,0.08)",
+              borderWidth: 1,
+              displayColors: false
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: "#9aa4b2" },
+              grid: { color: "rgba(255,255,255,0.04)" }
+            },
+            y: {
+              ticks: { color: "#9aa4b2" },
+              grid: { color: "rgba(255,255,255,0.04)" }
+            }
+          }
+        }
+      });
+    }
+
+    function init() {
+      updateToday();
+      renderQuickValues();
+      renderInputsFromStorage();
+      renderStreak();
+      updateHabitButtons();
+      updateFastUI();
+      updateGoalsAndScore();
+      renderHistoryChart();
+
+      document.getElementById("energyInput").addEventListener("input", updateEnergyLabel);
+
+      setInterval(updateFastUI, 30000);
+    }
+
+    init();
+  </script>
 </body>
 </html>
