@@ -2,1313 +2,1179 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <title>Pulse Fast</title>
-
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0d1117" />
+  <meta name="theme-color" content="#0b1220" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Pulse Fast" />
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
     :root {
-      --bg: #070b11;
-      --bg-soft: #0d1117;
-      --card: rgba(255, 255, 255, 0.07);
-      --card-strong: rgba(255, 255, 255, 0.1);
-      --line: rgba(255, 255, 255, 0.08);
-      --text: #f5f7fb;
-      --muted: #9aa4b2;
-      --green: #3ddc97;
-      --green-2: #1fbf75;
-      --blue: #5ac8fa;
-      --orange: #ff9f0a;
-      --red: #ff5f57;
-      --purple: #8b7cff;
-      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --bg: #08101d;
+      --bg2: #0d1729;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.12);
+      --line: rgba(255, 255, 255, 0.09);
+      --text: #f6f8fb;
+      --muted: #a6b1c2;
+      --green: #4ade80;
+      --green-dark: #22c55e;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --orange: #f59e0b;
+      --red: #fb7185;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
       --radius: 24px;
       --radius-sm: 18px;
-      --blur: saturate(140%) blur(14px);
+      --header-h: 84px;
+      --nav-h: 82px;
+      --target-calories: 1700;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
-      padding: 0;
-      background:
-        radial-gradient(circle at top left, rgba(61,220,151,0.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(90,200,250,0.12), transparent 22%),
-        linear-gradient(180deg, #091018 0%, #070b11 100%);
+      height: 100%;
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
-      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(74, 222, 128, 0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 24%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      font-family: "Avenir Next", "SF Pro Display", "Segoe UI", Inter, system-ui, sans-serif;
+      overscroll-behavior: none;
+      overflow: hidden;
+      -webkit-text-size-adjust: 100%;
     }
 
-    body {
-      padding: env(safe-area-inset-top) 18px env(safe-area-inset-bottom) 18px;
+    body { position: fixed; inset: 0; }
+
+    button, input, textarea, select {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .app-shell {
-      max-width: 460px;
+    .app {
+      height: 100dvh;
+      max-width: 480px;
       margin: 0 auto;
-      padding-bottom: 30px;
+      display: grid;
+      grid-template-rows: var(--header-h) 1fr var(--nav-h);
+      overflow: hidden;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 4px 10px;
+      padding: calc(env(safe-area-inset-top) + 14px) 18px 12px;
+      background: linear-gradient(180deg, rgba(8,16,29,0.94), rgba(8,16,29,0.7));
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, rgba(61,220,151,0.35), rgba(90,200,250,0.25));
-      border: 1px solid rgba(255,255,255,0.08);
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center;
+      background: linear-gradient(145deg, rgba(74,222,128,.24), rgba(96,165,250,.22));
       box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.08);
       font-size: 20px;
     }
+    .brand h1 { margin: 0; font-size: 19px; letter-spacing: -.02em; }
+    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
 
-    .brand h1 {
-      margin: 0;
-      font-size: 20px;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
+    .top-action {
+      min-width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 14px;
+      background: rgba(255,255,255,.05); color: var(--text); display: grid; place-items: center;
     }
 
-    .brand p {
-      margin: 2px 0 0;
-      color: var(--muted);
-      font-size: 12px;
+    .content {
+      overflow: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px 16px 24px;
+      scroll-behavior: smooth;
     }
 
-    .ghost-btn {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      height: 42px;
-      min-width: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      font-size: 18px;
-      cursor: pointer;
-      backdrop-filter: var(--blur);
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 28px;
-      padding: 22px;
-      background:
-        linear-gradient(145deg, rgba(61,220,151,0.17), rgba(90,200,250,0.08)),
-        rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-      backdrop-filter: var(--blur);
-      margin-top: 8px;
-    }
-
-    .hero::before,
-    .hero::after {
-      content: "";
-      position: absolute;
-      border-radius: 999px;
-      filter: blur(30px);
-      opacity: 0.7;
-    }
-
-    .hero::before {
-      width: 160px;
-      height: 160px;
-      right: -30px;
-      top: -50px;
-      background: rgba(61,220,151,0.16);
-    }
-
-    .hero::after {
-      width: 120px;
-      height: 120px;
-      left: -20px;
-      bottom: -30px;
-      background: rgba(90,200,250,0.12);
-    }
-
-    .hero-grid {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .hero h2 {
-      margin: 0 0 8px;
-      font-size: 26px;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-    }
-
-    .hero p {
-      margin: 0;
-      color: #d6deea;
-      font-size: 14px;
-      line-height: 1.5;
-      max-width: 28ch;
-    }
-
-    .hero-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .tag {
-      font-size: 11px;
-      color: #eaf4ff;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .hero-art {
-      min-height: 170px;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at 70% 20%, rgba(255,255,255,0.2), transparent 22%),
-        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
-      border: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .art-stack {
-      position: relative;
-      width: 150px;
-      height: 150px;
-    }
-
-    .bubble {
-      position: absolute;
-      border-radius: 24px;
-      display: grid;
-      place-items: center;
-      box-shadow: var(--shadow);
-      animation: floaty 4.6s ease-in-out infinite;
-      font-size: 26px;
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px);
-    }
-
-    .bubble.one {
-      width: 74px;
-      height: 74px;
-      left: 8px;
-      top: 42px;
-      background: linear-gradient(145deg, rgba(61,220,151,0.24), rgba(61,220,151,0.12));
-    }
-
-    .bubble.two {
-      width: 82px;
-      height: 82px;
-      right: 0;
-      top: 0;
-      animation-delay: .5s;
-      background: linear-gradient(145deg, rgba(90,200,250,0.22), rgba(90,200,250,0.08));
-    }
-
-    .bubble.three {
-      width: 78px;
-      height: 78px;
-      right: 14px;
-      bottom: 8px;
-      animation-delay: 1s;
-      background: linear-gradient(145deg, rgba(255,159,10,0.22), rgba(255,159,10,0.08));
-    }
-
-    @keyframes floaty {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 20px 4px 10px;
-    }
-
-    .section-title h3 {
-      margin: 0;
-      font-size: 17px;
-      letter-spacing: -0.02em;
-    }
-
-    .section-title span {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+    .page { display: none; }
+    .page.active { display: block; }
 
     .card {
-      position: relative;
-      overflow: hidden;
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      backdrop-filter: var(--blur);
-    }
-
-    .card-pad {
-      padding: 18px;
-    }
-
-    .small-label {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .value {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin: 0;
-    }
-
-    .sub {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .fast-card {
-      margin-top: 14px;
-      padding: 18px;
-    }
-
-    .fast-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .ring-wrap {
-      width: 110px;
-      height: 110px;
-      position: relative;
-      flex: 0 0 auto;
-    }
-
-    .ring-wrap svg {
-      width: 110px;
-      height: 110px;
-      transform: rotate(-90deg);
-    }
-
-    .ring-center {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      text-align: center;
-    }
-
-    .ring-center strong {
-      display: block;
-      font-size: 24px;
-      letter-spacing: -0.03em;
-    }
-
-    .ring-center span {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 2px;
-    }
-
-    .progress-row {
-      margin-top: 16px;
-    }
-
-    .progress-head {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .progress-bar {
-      height: 12px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 999px;
+      backdrop-filter: blur(18px);
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.04);
     }
 
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--green), var(--blue));
-      transition: width 0.45s ease;
-      box-shadow: 0 0 25px rgba(61,220,151,0.35);
+    .pad { padding: 18px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      border-radius: 28px;
+      background:
+        linear-gradient(145deg, rgba(74,222,128,.16), rgba(96,165,250,.10)),
+        rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
     }
 
-    .action-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 16px;
+    .hero::before, .hero::after {
+      content: ""; position: absolute; border-radius: 999px; filter: blur(30px);
     }
+    .hero::before { width: 160px; height: 160px; top: -50px; right: -40px; background: rgba(74,222,128,.14); }
+    .hero::after { width: 120px; height: 120px; bottom: -20px; left: -20px; background: rgba(96,165,250,.12); }
 
-    button {
-      border: none;
-      cursor: pointer;
-      border-radius: 18px;
-      padding: 14px 16px;
-      font-size: 15px;
-      font-weight: 700;
-      transition: transform .16s ease, opacity .16s ease, box-shadow .16s ease;
-    }
-
-    button:active {
-      transform: scale(.98);
-    }
-
-    .btn-primary {
-      color: #04110a;
-      background: linear-gradient(135deg, #45e6a2, #2fd68d);
-      box-shadow: 0 10px 24px rgba(61,220,151,0.22);
-    }
-
-    .btn-secondary {
-      color: var(--text);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--line);
-    }
-
-    .panel-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    .mini-card {
-      padding: 18px;
-      min-height: 145px;
-    }
-
-    .icon-pill {
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
+    .hero > * { position: relative; z-index: 1; }
+    .hero .eyebrow { color: #d9fbe7; font-size: 12px; text-transform: uppercase; letter-spacing: .12em; }
+    .hero h2 { margin: 8px 0 10px; font-size: 31px; line-height: 1.05; letter-spacing: -.035em; }
+    .hero .big-quote {
+      margin: 0 0 12px;
       font-size: 18px;
-      margin-bottom: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .green-bg { background: rgba(61,220,151,0.14); }
-    .blue-bg { background: rgba(90,200,250,0.14); }
-    .orange-bg { background: rgba(255,159,10,0.14); }
-    .red-bg { background: rgba(255,95,87,0.14); }
-
-    .stepper {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .stepper button {
-      width: 42px;
-      height: 42px;
-      padding: 0;
-      border-radius: 14px;
-      font-size: 20px;
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
-
-    .stepper-value {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .stepper-unit {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .habit-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .habit-chip {
-      flex: 1;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--line);
-      color: var(--text);
-      padding: 13px 12px;
-      border-radius: 16px;
-      text-align: center;
-      font-size: 13px;
+      line-height: 1.45;
+      color: #eef7ff;
       font-weight: 600;
     }
+    .hero .small-note { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag { padding: 8px 11px; border-radius: 999px; font-size: 11px; color: #eff6ff; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.08); }
 
-    .habit-chip.active {
-      background: linear-gradient(135deg, rgba(61,220,151,0.22), rgba(61,220,151,0.12));
-      border-color: rgba(61,220,151,0.3);
-      box-shadow: 0 10px 22px rgba(61,220,151,0.12);
+    .section-title {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      margin: 18px 2px 10px;
     }
+    .section-title h3 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
+    .section-title span { color: var(--muted); font-size: 12px; }
 
-    .form-card {
-      margin-top: 14px;
-      padding: 18px;
+    .stats-grid, .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .value { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -.04em; }
+    .label { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .sub { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+    .ring-wrap { width: 114px; height: 114px; position: relative; }
+    .ring-wrap svg { width: 114px; height: 114px; transform: rotate(-90deg); }
+    .ring-center {
+      position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
     }
+    .ring-center strong { display: block; font-size: 23px; letter-spacing: -.04em; }
+    .ring-center span { color: var(--muted); font-size: 11px; }
 
-    .fields {
-      display: grid;
-      gap: 12px;
-      margin-top: 8px;
-    }
+    .fast-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .mini-progress, .bar-bg { height: 12px; background: rgba(255,255,255,.06); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,.05); }
+    .bar-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--green), var(--blue)); transition: width .35s ease; box-shadow: 0 0 24px rgba(74,222,128,.28); }
+    .goal-fill-blue { background: linear-gradient(90deg, var(--blue), #93c5fd); }
+    .goal-fill-green { background: linear-gradient(90deg, var(--green), #86efac); }
+    .goal-fill-orange { background: linear-gradient(90deg, var(--orange), #fcd34d); }
+    .goal-fill-purple { background: linear-gradient(90deg, var(--purple), #c4b5fd); }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
+    .btn-row, .stack { display: grid; gap: 10px; }
+    .btn-row { grid-template-columns: 1fr 1fr; margin-top: 14px; }
 
-    .field label {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .input-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 0 14px;
-      min-height: 54px;
-    }
-
-    .input-wrap span {
-      color: var(--muted);
-      font-size: 14px;
-      margin-right: 8px;
-    }
-
-    .input-wrap input[type="number"],
-    .input-wrap input[type="text"] {
-      width: 100%;
-      background: transparent;
+    .btn, .nav-btn, .chip, .small-btn {
       border: none;
-      outline: none;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    .btn:active, .nav-btn:active, .chip:active, .small-btn:active { transform: scale(.985); }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #4ade80, #60a5fa);
+      color: #062112;
+      font-weight: 800;
+      padding: 15px 16px;
+      box-shadow: 0 14px 30px rgba(74,222,128,.18);
+    }
+    .btn.secondary {
+      background: rgba(255,255,255,.06);
       color: var(--text);
-      font-size: 17px;
-      font-family: inherit;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--green);
-    }
-
-    .energy-row {
-      margin-top: 4px;
-    }
-
-    .energy-scale {
-      display: flex;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 5px;
-    }
-
-    .save-btn {
-      margin-top: 14px;
-      width: 100%;
-      padding: 16px;
-      border-radius: 18px;
-      color: #05120b;
-      background: linear-gradient(135deg, #4ce7a7, #5ac8fa);
-      box-shadow: 0 14px 34px rgba(61,220,151,0.18);
-    }
-
-    .wide-card {
-      margin-top: 14px;
-      padding: 18px;
-    }
-
-    .goal-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .goal-item {
-      background: rgba(255,255,255,0.04);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px;
+      padding: 15px 16px;
     }
 
-    .goal-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
+    .counter {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .counter-left { display: flex; gap: 12px; align-items: center; }
+    .icon-box {
+      width: 44px; height: 44px; border-radius: 16px; display: grid; place-items: center;
+      font-size: 20px; border: 1px solid rgba(255,255,255,.08);
+    }
+    .blue { background: rgba(96,165,250,.15); }
+    .red { background: rgba(251,113,133,.14); }
+    .orange { background: rgba(245,158,11,.14); }
+    .green { background: rgba(74,222,128,.14); }
+    .purple { background: rgba(167,139,250,.14); }
+
+    .counter-controls { display: flex; gap: 8px; align-items: center; }
+    .small-btn {
+      width: 40px; height: 40px; padding: 0;
+      background: rgba(255,255,255,.08); color: var(--text); border: 1px solid var(--line);
+      font-size: 20px;
     }
 
-    .goal-top strong {
-      font-size: 14px;
+    .counter-number { font-size: 27px; font-weight: 800; letter-spacing: -.04em; }
+    .muted { color: var(--muted); }
+
+    .chip-row { display: flex; gap: 8px; margin-top: 10px; }
+    .chip {
+      flex: 1; padding: 13px 10px; background: rgba(255,255,255,.05); color: var(--text);
+      border: 1px solid var(--line); text-align: center; font-weight: 700;
+    }
+    .chip.active {
+      background: linear-gradient(135deg, rgba(74,222,128,.22), rgba(96,165,250,.12));
+      border-color: rgba(74,222,128,.25);
     }
 
-    .goal-top span {
-      font-size: 12px;
-      color: var(--muted);
+    .field { display: grid; gap: 6px; margin-bottom: 12px; }
+    .field label { font-size: 12px; color: var(--muted); }
+    .input-wrap {
+      display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 0 14px;
+      background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 18px;
+    }
+    .input-wrap input, .input-wrap textarea, .input-wrap select {
+      width: 100%; background: transparent; color: var(--text); border: none; outline: none;
+    }
+    .input-wrap textarea { resize: vertical; min-height: 90px; padding: 14px 0; }
+
+    .list { display: grid; gap: 10px; }
+    .list-item {
+      background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 18px; padding: 14px;
+    }
+    .list-item h4 { margin: 0 0 6px; font-size: 15px; }
+    .list-item p { margin: 0; color: #d7deea; font-size: 13px; line-height: 1.5; }
+    .list-item .meta { margin-top: 8px; color: var(--muted); font-size: 12px; }
+
+    .exercise-card {
+      display: grid; grid-template-columns: 88px 1fr; gap: 12px; align-items: start;
+      background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 20px; padding: 12px;
+    }
+    .exercise-visual {
+      width: 88px; height: 88px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); display: grid; place-items: center;
+      font-size: 36px;
+    }
+    .muscle-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .muscle-tags span { font-size: 11px; padding: 6px 8px; border-radius: 999px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.06); }
+
+    .tabs {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
+      padding: 10px 12px calc(env(safe-area-inset-bottom) + 12px);
+      border-top: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(8,16,29,0.75), rgba(8,16,29,0.96));
+      backdrop-filter: blur(18px);
+    }
+    .nav-btn {
+      min-height: 58px; padding: 8px 4px; background: transparent; color: var(--muted);
+      display: grid; place-items: center; gap: 3px;
+    }
+    .nav-btn span:first-child { font-size: 17px; }
+    .nav-btn span:last-child { font-size: 11px; }
+    .nav-btn.active {
+      color: var(--text); background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.06);
     }
 
-    .tiny-progress {
-      height: 8px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.06);
+    .meal-grid { display: grid; gap: 12px; }
+    .pill-switch { display: flex; gap: 8px; }
+    .pill-switch button {
+      flex: 1; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--text); border-radius: 16px; padding: 12px;
     }
-
-    .tiny-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      transition: width .35s ease;
-    }
-
-    .fill-green { background: linear-gradient(90deg, var(--green), #7ef0bf); }
-    .fill-blue { background: linear-gradient(90deg, var(--blue), #90dcff); }
-    .fill-orange { background: linear-gradient(90deg, var(--orange), #ffbf5a); }
-    .fill-purple { background: linear-gradient(90deg, var(--purple), #b2a7ff); }
-
-    .chart-card canvas {
-      margin-top: 10px;
-      width: 100% !important;
-      max-height: 240px !important;
-    }
-
-    .motivation {
-      display: grid;
-      grid-template-columns: 56px 1fr;
-      gap: 14px;
-      align-items: center;
-      margin-top: 14px;
-    }
-
-    .motivation-badge {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      font-size: 24px;
-      background: linear-gradient(145deg, rgba(139,124,255,0.2), rgba(90,200,250,0.1));
-      border: 1px solid var(--line);
-    }
+    .pill-switch button.active { background: linear-gradient(135deg, rgba(74,222,128,.22), rgba(96,165,250,.10)); }
 
     .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 24px;
-      transform: translateX(-50%) translateY(24px);
-      background: rgba(17, 24, 39, 0.95);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 14px 16px;
-      font-size: 14px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .25s ease, transform .25s ease;
-      z-index: 50;
-      box-shadow: var(--shadow);
-      min-width: 220px;
-      text-align: center;
+      position: fixed; left: 50%; bottom: 108px; transform: translateX(-50%) translateY(18px);
+      background: rgba(12,18,31,.94); color: white; border: 1px solid rgba(255,255,255,.08);
+      padding: 13px 16px; border-radius: 18px; font-size: 14px; opacity: 0; pointer-events: none;
+      transition: .25s ease; box-shadow: var(--shadow); z-index: 40;
     }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    .tiny { font-size: 11px; color: var(--muted); }
+    .spacer { height: 8px; }
 
-    .bottom-space {
-      height: 18px;
-    }
-
-    @media (max-width: 380px) {
-      .hero-grid,
-      .stats-grid,
-      .panel-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero p {
-        max-width: none;
-      }
-
-      .ring-wrap {
-        margin: 0 auto;
-      }
+    @media (max-width: 390px) {
+      .stats-grid, .two-col { grid-template-columns: 1fr; }
+      .tabs { grid-template-columns: repeat(3, 1fr); row-gap: 8px; }
+      .app { grid-template-rows: var(--header-h) 1fr auto; }
+      .exercise-card { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <div class="topbar">
+  <div class="app">
+    <header class="topbar">
       <div class="brand">
-        <div class="brand-badge">⚡</div>
+        <div class="logo">⚡</div>
         <div>
           <h1>Pulse Fast</h1>
-          <p>Tracker personale digiuno & benessere</p>
+          <p id="headerGreeting">Il tuo tracker personale</p>
         </div>
       </div>
-      <button class="ghost-btn" onclick="showToast('Dati salvati in locale sul dispositivo')">i</button>
-    </div>
+      <button class="top-action" onclick="showToast('I dati restano sul tuo dispositivo')">i</button>
+    </header>
 
-    <section class="hero">
-      <div class="hero-grid">
-        <div>
-          <h2>Più controllo, meno caos.</h2>
-          <p>
-            Digiuno, acqua, peso, energia, allenamento e sigarette: tutto in un’unica dashboard elegante e chiara.
-          </p>
-          <div class="hero-tags">
-            <div class="tag">20:4 tracking</div>
-            <div class="tag">progressi giornalieri</div>
-            <div class="tag">motivazione live</div>
+    <main class="content" id="contentScroller">
+      <section class="page active" id="page-home">
+        <div class="hero">
+          <div class="eyebrow">Motivazione del giorno</div>
+          <h2 id="heroTitle">Continua. Un giorno alla volta.</h2>
+          <p class="big-quote" id="heroQuote">Ogni scelta coerente oggi rende più semplice il risultato di domani.</p>
+          <p class="small-note" id="heroNote">Usa questa home come ancora: aprila quando ti viene voglia di mollare.</p>
+          <div class="tag-row">
+            <div class="tag">Target calorie 1700</div>
+            <div class="tag">Digiuno 20:4</div>
+            <div class="tag">Routine sostenibile</div>
           </div>
         </div>
 
-        <div class="hero-art">
-          <div class="art-stack">
-            <div class="bubble one">💧</div>
-            <div class="bubble two">🏃</div>
-            <div class="bubble three">🥗</div>
+        <div class="section-title">
+          <h3>Cruscotto</h3>
+          <span id="todayText"></span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="card pad">
+            <div class="label">Streak attuale</div>
+            <p class="value" id="streakValue">0</p>
+            <div class="sub">giorni coerenti di fila</div>
+          </div>
+          <div class="card pad">
+            <div class="label">Punteggio giornata</div>
+            <p class="value" id="scoreValue">0</p>
+            <div class="sub">su 100</div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <div class="section-title">
-      <h3>Oggi</h3>
-      <span id="todayLabel"></span>
-    </div>
-
-    <section class="stats-grid">
-      <div class="card">
-        <div class="card-pad">
-          <span class="small-label">Streak attuale</span>
-          <p class="value" id="streakValue">0</p>
-          <div class="sub">giorni coerenti consecutivi</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-pad">
-          <span class="small-label">Punteggio giornaliero</span>
-          <p class="value" id="scoreValue">0</p>
-          <div class="sub">su 100 punti possibili</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card fast-card">
-      <div class="fast-top">
-        <div>
-          <span class="small-label">Digiuno attivo</span>
-          <p class="value" id="fastHours">0.0h</p>
-          <div class="sub" id="fastStatus">Pronto a iniziare</div>
-        </div>
-
-        <div class="ring-wrap">
-          <svg viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.08)" stroke-width="10" fill="none"></circle>
-            <circle
-              id="ringProgress"
-              cx="60"
-              cy="60"
-              r="50"
-              stroke="url(#ringGradient)"
-              stroke-width="10"
-              stroke-linecap="round"
-              fill="none"
-              stroke-dasharray="314.159"
-              stroke-dashoffset="314.159"
-            ></circle>
-            <defs>
-              <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#3ddc97"></stop>
-                <stop offset="100%" stop-color="#5ac8fa"></stop>
-              </linearGradient>
-            </defs>
-          </svg>
-          <div class="ring-center">
+        <div class="card pad" style="margin-top:12px;">
+          <div class="fast-head">
             <div>
-              <strong id="ringPercent">0%</strong>
-              <span>completato</span>
+              <div class="label">Digiuno attivo</div>
+              <p class="value" id="fastTimeText">00:00:00</p>
+              <div class="sub" id="fastStatusText">Pronto a iniziare</div>
+            </div>
+            <div class="ring-wrap">
+              <svg viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,.08)" stroke-width="10" fill="none"></circle>
+                <circle id="ringProgress" cx="60" cy="60" r="50" stroke="url(#grad)" stroke-width="10" stroke-linecap="round" fill="none" stroke-dasharray="314.159" stroke-dashoffset="314.159"></circle>
+                <defs>
+                  <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4ade80"></stop>
+                    <stop offset="100%" stop-color="#60a5fa"></stop>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="ring-center"><div><strong id="fastPercent">0%</strong><span>completato</span></div></div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="progress-row">
-        <div class="progress-head">
-          <span>Obiettivo: 20 ore</span>
-          <span id="fastCountdown">20h rimanenti</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="fastBar"></div>
-        </div>
-      </div>
-
-      <div class="action-row">
-        <button class="btn-primary" onclick="startFast()">Inizia digiuno</button>
-        <button class="btn-secondary" onclick="stopFast()">Termina</button>
-      </div>
-    </section>
-
-    <section class="panel-grid">
-      <div class="card mini-card">
-        <div class="icon-pill blue-bg">💧</div>
-        <span class="small-label">Acqua</span>
-        <div class="stepper">
-          <button onclick="changeWater(-0.25)">−</button>
-          <div>
-            <div class="stepper-value" id="waterValue">0.00</div>
-            <div class="stepper-unit">litri oggi</div>
+          <div style="margin-top:14px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;">
+              <span>Obiettivo: 20 ore</span>
+              <span id="fastRemaining">20:00:00 rimanenti</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" id="fastBar"></div></div>
           </div>
-          <button onclick="changeWater(0.25)">+</button>
-        </div>
-      </div>
-
-      <div class="card mini-card">
-        <div class="icon-pill red-bg">🚬</div>
-        <span class="small-label">Sigarette</span>
-        <div class="stepper">
-          <button onclick="changeSmokes(-1)">−</button>
-          <div>
-            <div class="stepper-value" id="smokesValue">0</div>
-            <div class="stepper-unit">consumate oggi</div>
-          </div>
-          <button onclick="changeSmokes(1)">+</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="card form-card">
-      <span class="small-label">Allenamento</span>
-      <div class="habit-row">
-        <button id="cardioBtn" class="habit-chip" onclick="toggleHabit('cardio')">🏃 Cardio</button>
-        <button id="weightsBtn" class="habit-chip" onclick="toggleHabit('weights')">🏋️ Pesi</button>
-      </div>
-
-      <div class="fields">
-        <div class="field">
-          <label for="weightInput">Peso</label>
-          <div class="input-wrap">
-            <span>⚖️</span>
-            <input id="weightInput" type="number" step="0.1" placeholder="es. 74.8" />
+          <div class="btn-row">
+            <button class="btn primary" onclick="startFast()">Inizia digiuno</button>
+            <button class="btn secondary" onclick="stopFast()">Termina</button>
           </div>
         </div>
 
-        <div class="field">
-          <label for="caloriesInput">Calorie totali</label>
-          <div class="input-wrap">
-            <span>🔥</span>
-            <input id="caloriesInput" type="number" step="1" placeholder="es. 1550" />
+        <div class="two-col" style="margin-top:12px;">
+          <div class="card pad">
+            <div class="counter">
+              <div class="counter-left">
+                <div class="icon-box blue">💧</div>
+                <div>
+                  <div class="label">Acqua</div>
+                  <div class="counter-number" id="waterValue">0.00</div>
+                  <div class="tiny">litri oggi</div>
+                </div>
+              </div>
+              <div class="counter-controls">
+                <button class="small-btn" onclick="changeWater(-0.25)">−</button>
+                <button class="small-btn" onclick="changeWater(0.25)">+</button>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div class="field">
-          <label for="energyInput">Energia percepita</label>
-          <div class="energy-row">
-            <input id="energyInput" type="range" min="1" max="10" value="5" />
-            <div class="energy-scale">
-              <span>scarso</span>
-              <span id="energyValue">5/10</span>
-              <span>ottimo</span>
+          <div class="card pad">
+            <div class="counter">
+              <div class="counter-left">
+                <div class="icon-box red">🚬</div>
+                <div>
+                  <div class="label">Sigarette</div>
+                  <div class="counter-number" id="smokesValue">0</div>
+                  <div class="tiny">oggi</div>
+                </div>
+              </div>
+              <div class="counter-controls">
+                <button class="small-btn" onclick="changeSmokes(-1)">−</button>
+                <button class="small-btn" onclick="changeSmokes(1)">+</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <button class="save-btn" onclick="saveDay()">Salva giornata</button>
-      </div>
-    </section>
-
-    <section class="card wide-card">
-      <div class="section-title" style="margin:0 0 8px;">
-        <h3>Obiettivi giornalieri</h3>
-        <span>focus visivo</span>
-      </div>
-
-      <div class="goal-list">
-        <div class="goal-item">
-          <div class="goal-top">
-            <strong>Idratazione</strong>
-            <span id="goalWaterText">0 / 2.0 L</span>
+        <div class="card pad" style="margin-top:12px;">
+          <div class="section-title" style="margin:0 0 10px;">
+            <h3>Allenamento e giornata</h3>
+            <span>salvataggio rapido</span>
           </div>
-          <div class="tiny-progress"><div class="tiny-fill fill-blue" id="goalWaterFill"></div></div>
+          <div class="chip-row">
+            <button class="chip" id="cardioBtn" onclick="toggleHabit('cardio')">🏃 Cardio</button>
+            <button class="chip" id="weightsBtn" onclick="toggleHabit('weights')">🏋️ Pesi</button>
+          </div>
+          <div class="spacer"></div>
+          <div class="field">
+            <label for="weightInput">Peso</label>
+            <div class="input-wrap"><span>⚖️</span><input id="weightInput" type="number" step="0.1" placeholder="es. 74.8"></div>
+          </div>
+          <div class="field">
+            <label for="caloriesInput">Calorie della giornata</label>
+            <div class="input-wrap"><span>🔥</span><input id="caloriesInput" type="number" step="1" placeholder="target 1700"></div>
+          </div>
+          <div class="field">
+            <label for="energyInput">Energia percepita</label>
+            <div class="input-wrap" style="padding:12px 14px; min-height:auto; display:block;">
+              <input id="energyInput" type="range" min="1" max="10" value="5">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px; margin-top:4px;">
+                <span class="tiny">bassa</span><strong id="energyLabel">5/10</strong><span class="tiny">alta</span>
+              </div>
+            </div>
+          </div>
+          <button class="btn primary" style="width:100%;" onclick="saveDay()">Salva giornata</button>
         </div>
 
-        <div class="goal-item">
-          <div class="goal-top">
-            <strong>Calorie target</strong>
-            <span id="goalCaloriesText">—</span>
+        <div class="card pad" style="margin-top:12px;">
+          <div class="section-title" style="margin:0 0 12px;">
+            <h3>Obiettivi di oggi</h3>
+            <span>focus</span>
           </div>
-          <div class="tiny-progress"><div class="tiny-fill fill-orange" id="goalCaloriesFill"></div></div>
-        </div>
-
-        <div class="goal-item">
-          <div class="goal-top">
-            <strong>Fumo contenuto</strong>
-            <span id="goalSmokesText">0 / 5 max</span>
-          </div>
-          <div class="tiny-progress"><div class="tiny-fill fill-purple" id="goalSmokesFill"></div></div>
-        </div>
-
-        <div class="goal-item">
-          <div class="goal-top">
-            <strong>Allenamento</strong>
-            <span id="goalWorkoutText">0 / 2 attività</span>
-          </div>
-          <div class="tiny-progress"><div class="tiny-fill fill-green" id="goalWorkoutFill"></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card wide-card chart-card">
-      <div class="section-title" style="margin:0 0 8px;">
-        <h3>Andamento peso</h3>
-        <span>storico locale</span>
-      </div>
-      <canvas id="weightChart"></canvas>
-
-      <div class="motivation">
-        <div class="motivation-badge">✨</div>
-        <div>
-          <div class="small-label" style="margin-bottom:4px;">Messaggio del giorno</div>
-          <div id="motivationText" style="line-height:1.45; font-size:14px;">
-            Costanza batte intensità. Continua così.
+          <div class="stack">
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><strong>Idratazione</strong><span class="tiny" id="goalWaterText">0.00 / 2.0 L</span></div>
+              <div class="mini-progress"><div class="bar-fill goal-fill-blue" id="goalWaterFill"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><strong>Calorie target</strong><span class="tiny" id="goalCaloriesText">0 / 1700</span></div>
+              <div class="mini-progress"><div class="bar-fill goal-fill-orange" id="goalCaloriesFill"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><strong>Fumo contenuto</strong><span class="tiny" id="goalSmokesText">0 / 5 max</span></div>
+              <div class="mini-progress"><div class="bar-fill goal-fill-purple" id="goalSmokesFill"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><strong>Allenamento</strong><span class="tiny" id="goalWorkoutText">0 / 2</span></div>
+              <div class="mini-progress"><div class="bar-fill goal-fill-green" id="goalWorkoutFill"></div></div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <div class="bottom-space"></div>
+      <section class="page" id="page-diet">
+        <div class="hero" style="margin-bottom:14px;">
+          <div class="eyebrow">Dieta consigliata</div>
+          <h2>Dimagrire bene, non in fretta.</h2>
+          <p class="big-quote">L’obiettivo “-15 kg entro luglio 2026” è molto aggressivo: meglio puntare a un ritmo sostenibile e non distruttivo.</p>
+          <p class="small-note">Questa sezione è informativa e non sostituisce un professionista. Il focus è mantenere energia, costanza e massa muscolare.</p>
+        </div>
+
+        <div class="card pad">
+          <div class="section-title" style="margin:0 0 8px;">
+            <h3>Linee guida quotidiane</h3>
+            <span>target: 1700 kcal</span>
+          </div>
+          <div class="list">
+            <div class="list-item"><h4>1. Calorie</h4><p>Punta a circa <strong>1700 kcal</strong> al giorno, con flessibilità di ±100 kcal quando serve. Evita tagli eccessivi per non crollare con energia e fame.</p></div>
+            <div class="list-item"><h4>2. Proteine</h4><p>Prova a tenere una quota proteica presente a ogni pasto: uova, pollo, tonno, yogurt greco, legumi, fiocchi di latte, tofu. Questo aiuta sazietà e muscoli.</p></div>
+            <div class="list-item"><h4>3. Carboidrati intelligenti</h4><p>Usa riso, patate, avena, pane semplice, frutta. Sono utili soprattutto nel primo pasto dopo allenamento o corsa.</p></div>
+            <div class="list-item"><h4>4. Grassi buoni</h4><p>Olio d’oliva, frutta secca, avocado, uova. Mantienili moderati ma presenti.</p></div>
+            <div class="list-item"><h4>5. Verdure e fibra</h4><p>Metti volume nei pasti con insalate, zucchine, pomodori, broccoli, finocchi, carote. Ti aiutano a non sforare.</p></div>
+          </div>
+        </div>
+
+        <div class="card pad" style="margin-top:12px;">
+          <div class="section-title" style="margin:0 0 8px;">
+            <h3>Esempio giornata 20:4</h3>
+            <span>semplice</span>
+          </div>
+          <div class="list">
+            <div class="list-item"><h4>Pasto 1</h4><p>Riso o patate + proteina magra + verdure + un filo d’olio. Esempio: 120 g riso cotto? meglio adattalo alle tue calorie, 150–200 g pollo, verdure, 10 g olio.</p></div>
+            <div class="list-item"><h4>Pasto 2</h4><p>Yogurt greco o uova o tonno con pane/frutta, oppure un secondo pasto completo più piccolo del primo.</p></div>
+            <div class="list-item"><h4>Snack opzionale nella finestra</h4><p>Frutta, yogurt greco, una manciata piccola di frutta secca, oppure una fonte proteica leggera.</p></div>
+          </div>
+        </div>
+
+        <div class="card pad" style="margin-top:12px;">
+          <div class="section-title" style="margin:0 0 8px;">
+            <h3>Strategia realistica</h3>
+            <span>sostenibilità</span>
+          </div>
+          <div class="list-item">
+            <p>Il ritmo più gestibile è perdere peso in modo progressivo, senza allenarti fino a stare male. Più che inseguire una scadenza aggressiva, punta a: calorie controllate, allenamento regolare, acqua, sonno, riduzione graduale del fumo e continuità.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-training">
+        <div class="hero" style="margin-bottom:14px;">
+          <div class="eyebrow">Allenamento consigliato</div>
+          <h2>Muoviti in modo progressivo.</h2>
+          <p class="big-quote">Meglio 30–40 minuti ben fatti e ripetibili che una sessione troppo dura che ti fa mollare.</p>
+          <p class="small-note">Il conteggio passi via web è una stima basata sulla posizione GPS. È utile all’aperto, ma non è preciso sul tapis roulant o indoor.</p>
+        </div>
+
+        <div class="card pad">
+          <div class="section-title" style="margin:0 0 8px;">
+            <h3>Routine base</h3>
+            <span>30–40 min</span>
+          </div>
+          <div class="list">
+            <div class="list-item"><h4>Riscaldamento</h4><p>5 minuti camminata lenta o mobilità leggera.</p></div>
+            <div class="list-item"><h4>Cardio</h4><p>15–20 minuti a intensità moderata: camminata veloce o corsa leggera. Devi riuscire a parlare a frasi brevi.</p></div>
+            <div class="list-item"><h4>Pesi</h4><p>15–20 minuti con esercizi semplici e carichi gestibili. Fermati prima di arrivare distrutto.</p></div>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-top:12px;">
+          <div class="card pad">
+            <div class="label">Timer allenamento</div>
+            <p class="value" id="workoutTimerText">00:00</p>
+            <div class="btn-row" style="grid-template-columns:1fr 1fr;">
+              <button class="btn primary" onclick="startWorkoutTimer()">Start</button>
+              <button class="btn secondary" onclick="stopWorkoutTimer()">Stop</button>
+            </div>
+            <button class="btn secondary" style="width:100%; margin-top:10px;" onclick="resetWorkoutTimer()">Reset</button>
+          </div>
+          <div class="card pad">
+            <div class="label">Passi stimati</div>
+            <p class="value" id="stepsText">0</p>
+            <div class="sub" id="distanceText">0.00 km tracciati</div>
+            <div class="btn-row" style="grid-template-columns:1fr 1fr;">
+              <button class="btn primary" onclick="startStepTracking()">Traccia</button>
+              <button class="btn secondary" onclick="stopStepTracking()">Stop</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-exercises">
+        <div class="hero" style="margin-bottom:14px;">
+          <div class="eyebrow">Esercizi e muscoli</div>
+          <h2>Allenati con più consapevolezza.</h2>
+          <p class="big-quote">Sapere cosa stai allenando rende più facile eseguire bene e con intenzione.</p>
+          <p class="small-note">Le immagini qui sono rappresentazioni visive semplici per aiutarti a capire i distretti coinvolti.</p>
+        </div>
+        <div class="list">
+          <div class="exercise-card">
+            <div class="exercise-visual">💪</div>
+            <div>
+              <h4 style="margin:0 0 6px;">Curl con manubri</h4>
+              <p style="margin:0; color:#d7deea; font-size:13px; line-height:1.5;">Ottimo per ripartire con le braccia. Movimento controllato, gomiti vicini al corpo.</p>
+              <div class="muscle-tags"><span>Bicipiti</span><span>Avambracci</span></div>
+            </div>
+          </div>
+          <div class="exercise-card">
+            <div class="exercise-visual">🫷</div>
+            <div>
+              <h4 style="margin:0 0 6px;">Estensioni tricipiti sopra la testa</h4>
+              <p style="margin:0; color:#d7deea; font-size:13px; line-height:1.5;">Per la parte posteriore del braccio. Mantieni addome attivo e spalle basse.</p>
+              <div class="muscle-tags"><span>Tricipiti</span><span>Spalle stabilizzatrici</span></div>
+            </div>
+          </div>
+          <div class="exercise-card">
+            <div class="exercise-visual">🏋️</div>
+            <div>
+              <h4 style="margin:0 0 6px;">Alzate laterali</h4>
+              <p style="margin:0; color:#d7deea; font-size:13px; line-height:1.5;">Usa pesi davvero leggeri. Movimento lento, senza slancio.</p>
+              <div class="muscle-tags"><span>Deltoidi laterali</span><span>Spalle</span></div>
+            </div>
+          </div>
+          <div class="exercise-card">
+            <div class="exercise-visual">🚶</div>
+            <div>
+              <h4 style="margin:0 0 6px;">Camminata veloce</h4>
+              <p style="margin:0; color:#d7deea; font-size:13px; line-height:1.5;">Perfetta per iniziare e sostenibile anche nei giorni di minore energia.</p>
+              <div class="muscle-tags"><span>Polpacci</span><span>Glutei</span><span>Quadricipiti</span><span>Cardio</span></div>
+            </div>
+          </div>
+          <div class="exercise-card">
+            <div class="exercise-visual">🏃</div>
+            <div>
+              <h4 style="margin:0 0 6px;">Corsa leggera</h4>
+              <p style="margin:0; color:#d7deea; font-size:13px; line-height:1.5;">Ritmo facile, respirazione controllata. Fermati se senti capogiri o fiato fuori controllo.</p>
+              <div class="muscle-tags"><span>Cardio</span><span>Glutei</span><span>Quadricipiti</span><span>Core</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-meals">
+        <div class="hero" style="margin-bottom:14px;">
+          <div class="eyebrow">Diario pasti</div>
+          <h2>Ricorda cosa hai mangiato.</h2>
+          <p class="big-quote">Scrivilo appena mangi: domani ti basterà aprire qui per vedere cosa hai fatto ieri.</p>
+          <p class="small-note">Puoi tenere nota di pasti, spuntini, quantità e impressioni personali.</p>
+        </div>
+
+        <div class="card pad">
+          <div class="field">
+            <label for="mealType">Tipo pasto</label>
+            <div class="input-wrap">
+              <span>🍽️</span>
+              <select id="mealType">
+                <option value="Pasto 1">Pasto 1</option>
+                <option value="Pasto 2">Pasto 2</option>
+                <option value="Snack">Snack</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="mealText">Cosa hai mangiato</label>
+            <div class="input-wrap"><span>📝</span><textarea id="mealText" placeholder="Esempio: pollo, riso, zucchine, yogurt greco..."></textarea></div>
+          </div>
+          <div class="field">
+            <label for="mealCalories">Calorie stimate</label>
+            <div class="input-wrap"><span>🔥</span><input id="mealCalories" type="number" step="1" placeholder="facoltativo"></div>
+          </div>
+          <button class="btn primary" style="width:100%;" onclick="addMeal()">Aggiungi al diario</button>
+        </div>
+
+        <div class="card pad" style="margin-top:12px;">
+          <div class="section-title" style="margin:0 0 10px;">
+            <h3>Consultazione rapida</h3>
+            <span>oggi / ieri</span>
+          </div>
+          <div class="pill-switch">
+            <button id="todayMealsBtn" class="active" onclick="setMealsView('today')">Oggi</button>
+            <button id="yesterdayMealsBtn" onclick="setMealsView('yesterday')">Ieri</button>
+          </div>
+          <div class="meal-grid" id="mealsList" style="margin-top:12px;"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-profile">
+        <div class="hero" style="margin-bottom:14px;">
+          <div class="eyebrow">Profilo personale</div>
+          <h2>Rendi l’app tua.</h2>
+          <p class="big-quote">Quando leggi il tuo nome nei promemoria, la routine diventa più concreta e personale.</p>
+          <p class="small-note">Il profilo resta salvato localmente sul dispositivo.</p>
+        </div>
+
+        <div class="card pad">
+          <div class="field">
+            <label for="firstNameInput">Nome</label>
+            <div class="input-wrap"><span>🙂</span><input id="firstNameInput" type="text" placeholder="Nome"></div>
+          </div>
+          <div class="field">
+            <label for="lastNameInput">Cognome</label>
+            <div class="input-wrap"><span>✍️</span><input id="lastNameInput" type="text" placeholder="Cognome"></div>
+          </div>
+          <button class="btn primary" style="width:100%;" onclick="saveProfile()">Salva profilo</button>
+        </div>
+
+        <div class="card pad" style="margin-top:12px;">
+          <div class="section-title" style="margin:0 0 8px;">
+            <h3>Riepilogo personale</h3>
+            <span>locale</span>
+          </div>
+          <div class="list-item">
+            <h4 id="profileSummaryName">Profilo non ancora creato</h4>
+            <p id="profileSummaryText">Appena salvi nome e cognome, le frasi motivazionali e alcune scritte saranno personalizzate.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="tabs">
+      <button class="nav-btn active" data-page="home" onclick="switchPage('home', this)"><span>🏠</span><span>Home</span></button>
+      <button class="nav-btn" data-page="diet" onclick="switchPage('diet', this)"><span>🥗</span><span>Dieta</span></button>
+      <button class="nav-btn" data-page="training" onclick="switchPage('training', this)"><span>⏱️</span><span>Allen.</span></button>
+      <button class="nav-btn" data-page="exercises" onclick="switchPage('exercises', this)"><span>💪</span><span>Esercizi</span></button>
+      <button class="nav-btn" data-page="meals" onclick="switchPage('meals', this)"><span>🍽️</span><span>Pasti</span></button>
+      <button class="nav-btn" data-page="profile" onclick="switchPage('profile', this)"><span>👤</span><span>Profilo</span></button>
+    </nav>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
     }
 
-    const STORAGE_KEYS = {
-      fastStart: "pulsefast_fastStart",
-      water: "pulsefast_water",
-      smokes: "pulsefast_smokes",
-      cardio: "pulsefast_cardio",
-      weights: "pulsefast_weights",
-      calories: "pulsefast_calories",
-      energy: "pulsefast_energy",
-      score: "pulsefast_score",
-      streak: "pulsefast_streak",
-      lastSavedDate: "pulsefast_lastSavedDate",
-      weightsHistory: "pulsefast_weightsHistory"
+    const KEYS = {
+      fastStart: 'pf_fastStart',
+      water: 'pf_water',
+      smokes: 'pf_smokes',
+      cardio: 'pf_cardio',
+      weights: 'pf_weights',
+      calories: 'pf_calories',
+      energy: 'pf_energy',
+      streak: 'pf_streak',
+      score: 'pf_score',
+      lastSavedDate: 'pf_lastSavedDate',
+      weightsHistory: 'pf_weightsHistory',
+      meals: 'pf_meals',
+      firstName: 'pf_firstName',
+      lastName: 'pf_lastName',
+      workoutElapsed: 'pf_workoutElapsed',
+      stepsDistanceM: 'pf_stepsDistanceM'
     };
 
-    let chart;
+    const TARGET_FAST_HOURS = 20;
+    const TARGET_WATER = 2;
+    const TARGET_CALORIES = 1700;
+    const MAX_SMOKES = 5;
+    const AVG_STEP_LENGTH_M = 0.78;
 
-    function getTodayKey() {
+    let toastTimer;
+    let workoutInterval = null;
+    let workoutElapsed = Number(localStorage.getItem(KEYS.workoutElapsed) || 0);
+    let geoWatchId = null;
+    let lastPosition = null;
+    let trackedDistanceM = Number(localStorage.getItem(KEYS.stepsDistanceM) || 0);
+    let mealsView = 'today';
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function switchPage(name, el) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(`page-${name}`).classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.getElementById('contentScroller').scrollTo({ top: 0, behavior: 'smooth' });
+      if (name === 'meals') renderMeals();
+    }
+
+    function getTodayKey(offsetDays = 0) {
       const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
       const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
       return `${y}-${m}-${day}`;
     }
 
-    function formatTodayLabel() {
+    function formatItalianDate() {
       const d = new Date();
-      const days = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
-      const months = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+      const days = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+      const months = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
       return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
     }
 
-    function getNumber(key, fallback = 0) {
+    function fmtHMS(totalSeconds) {
+      const s = Math.max(0, Math.floor(totalSeconds));
+      const hh = String(Math.floor(s / 3600)).padStart(2, '0');
+      const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+      const ss = String(s % 60).padStart(2, '0');
+      return `${hh}:${mm}:${ss}`;
+    }
+
+    function getNum(key, fallback = 0) {
       const val = localStorage.getItem(key);
-      return val === null || val === "" ? fallback : Number(val);
+      return val === null || val === '' ? fallback : Number(val);
     }
 
     function getBool(key) {
-      return localStorage.getItem(key) === "true";
+      return localStorage.getItem(key) === 'true';
     }
 
     function setBool(key, value) {
-      localStorage.setItem(key, value ? "true" : "false");
+      localStorage.setItem(key, value ? 'true' : 'false');
     }
 
-    function getWeightsHistory() {
+    function getMeals() {
       try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEYS.weightsHistory) || "[]");
+        return JSON.parse(localStorage.getItem(KEYS.meals) || '[]');
       } catch {
         return [];
       }
     }
 
-    function saveWeightsHistory(list) {
-      localStorage.setItem(STORAGE_KEYS.weightsHistory, JSON.stringify(list));
+    function saveMeals(meals) {
+      localStorage.setItem(KEYS.meals, JSON.stringify(meals));
     }
 
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.classList.add("show");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2200);
+    function getWeightsHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(KEYS.weightsHistory) || '[]');
+      } catch {
+        return [];
+      }
     }
 
-    function updateToday() {
-      document.getElementById("todayLabel").textContent = formatTodayLabel();
+    function saveWeightsHistory(items) {
+      localStorage.setItem(KEYS.weightsHistory, JSON.stringify(items));
     }
 
-    function updateEnergyLabel() {
-      const energy = document.getElementById("energyInput").value;
-      document.getElementById("energyValue").textContent = `${energy}/10`;
+    function fullName() {
+      const first = (localStorage.getItem(KEYS.firstName) || '').trim();
+      const last = (localStorage.getItem(KEYS.lastName) || '').trim();
+      return `${first} ${last}`.trim();
     }
 
-    function updateHabitButtons() {
-      const cardio = getBool(STORAGE_KEYS.cardio);
-      const weights = getBool(STORAGE_KEYS.weights);
-
-      document.getElementById("cardioBtn").classList.toggle("active", cardio);
-      document.getElementById("weightsBtn").classList.toggle("active", weights);
+    function firstNameOnly() {
+      return (localStorage.getItem(KEYS.firstName) || '').trim();
     }
 
-    function toggleHabit(type) {
-      const key = type === "cardio" ? STORAGE_KEYS.cardio : STORAGE_KEYS.weights;
-      const current = getBool(key);
-      setBool(key, !current);
-      updateHabitButtons();
-      updateGoalsAndScore();
+    function personalizeTexts() {
+      const name = firstNameOnly();
+      document.getElementById('headerGreeting').textContent = name ? `${name}, resta costante oggi.` : 'Il tuo tracker personale';
+
+      const quotes = [
+        name ? `${name}, continua: non devi essere perfetto, devi essere coerente.` : 'Non devi essere perfetto, devi essere coerente.',
+        name ? `${name}, oggi conta più la costanza della fretta.` : 'Oggi conta più la costanza della fretta.',
+        name ? `${name}, ogni scelta giusta di oggi alleggerisce il domani.` : 'Ogni scelta giusta di oggi alleggerisce il domani.',
+        name ? `${name}, fai bene poco alla volta e fallo spesso.` : 'Fai bene poco alla volta e fallo spesso.'
+      ];
+      const idx = new Date().getDate() % quotes.length;
+      document.getElementById('heroTitle').textContent = name ? `${name}, continua. Un giorno alla volta.` : 'Continua. Un giorno alla volta.';
+      document.getElementById('heroQuote').textContent = quotes[idx];
+      document.getElementById('heroNote').textContent = name ? `${name}, apri questa home quando hai bisogno di ricordarti perché hai iniziato.` : 'Apri questa home quando hai bisogno di ricordarti perché hai iniziato.';
+
+      const n = fullName();
+      document.getElementById('profileSummaryName').textContent = n || 'Profilo non ancora creato';
+      document.getElementById('profileSummaryText').textContent = n
+        ? `Le frasi motivazionali e i saluti sono personalizzati per ${n}.`
+        : 'Appena salvi nome e cognome, le frasi motivazionali e alcune scritte saranno personalizzate.';
+    }
+
+    function renderQuickValues() {
+      document.getElementById('waterValue').textContent = getNum(KEYS.water).toFixed(2);
+      document.getElementById('smokesValue').textContent = getNum(KEYS.smokes).toFixed(0);
+      document.getElementById('todayText').textContent = formatItalianDate();
+      document.getElementById('energyLabel').textContent = `${document.getElementById('energyInput').value}/10`;
     }
 
     function changeWater(delta) {
-      let value = Math.max(0, getNumber(STORAGE_KEYS.water) + delta);
-      value = Math.round(value * 100) / 100;
-      localStorage.setItem(STORAGE_KEYS.water, value);
+      const next = Math.max(0, Math.round((getNum(KEYS.water) + delta) * 100) / 100);
+      localStorage.setItem(KEYS.water, next);
       renderQuickValues();
       updateGoalsAndScore();
     }
 
     function changeSmokes(delta) {
-      let value = Math.max(0, getNumber(STORAGE_KEYS.smokes) + delta);
-      localStorage.setItem(STORAGE_KEYS.smokes, value);
+      const next = Math.max(0, getNum(KEYS.smokes) + delta);
+      localStorage.setItem(KEYS.smokes, next);
       renderQuickValues();
       updateGoalsAndScore();
     }
 
-    function renderQuickValues() {
-      document.getElementById("waterValue").textContent = getNumber(STORAGE_KEYS.water).toFixed(2);
-      document.getElementById("smokesValue").textContent = getNumber(STORAGE_KEYS.smokes).toFixed(0);
+    function toggleHabit(type) {
+      const key = type === 'cardio' ? KEYS.cardio : KEYS.weights;
+      setBool(key, !getBool(key));
+      renderHabitButtons();
+      updateGoalsAndScore();
+    }
+
+    function renderHabitButtons() {
+      document.getElementById('cardioBtn').classList.toggle('active', getBool(KEYS.cardio));
+      document.getElementById('weightsBtn').classList.toggle('active', getBool(KEYS.weights));
     }
 
     function startFast() {
-      localStorage.setItem(STORAGE_KEYS.fastStart, Date.now());
+      localStorage.setItem(KEYS.fastStart, String(Date.now()));
       updateFastUI();
-      showToast("Digiuno avviato");
+      showToast('Digiuno iniziato');
     }
 
     function stopFast() {
-      localStorage.removeItem(STORAGE_KEYS.fastStart);
+      localStorage.removeItem(KEYS.fastStart);
       updateFastUI();
-      showToast("Digiuno terminato");
+      showToast('Digiuno terminato');
     }
 
     function updateFastUI() {
-      const start = Number(localStorage.getItem(STORAGE_KEYS.fastStart) || 0);
-      const ring = document.getElementById("ringProgress");
+      const start = Number(localStorage.getItem(KEYS.fastStart) || 0);
       const circumference = 314.159;
+      const ring = document.getElementById('ringProgress');
 
       if (!start) {
-        document.getElementById("fastHours").textContent = "0.0h";
-        document.getElementById("fastStatus").textContent = "Pronto a iniziare";
-        document.getElementById("ringPercent").textContent = "0%";
-        document.getElementById("fastCountdown").textContent = "20h rimanenti";
-        document.getElementById("fastBar").style.width = "0%";
+        document.getElementById('fastTimeText').textContent = '00:00:00';
+        document.getElementById('fastStatusText').textContent = 'Pronto a iniziare';
+        document.getElementById('fastPercent').textContent = '0%';
+        document.getElementById('fastRemaining').textContent = '20:00:00 rimanenti';
+        document.getElementById('fastBar').style.width = '0%';
         ring.style.strokeDashoffset = circumference;
         return;
       }
 
-      const diffHours = (Date.now() - start) / 3600000;
-      const progress = Math.min(diffHours / 20, 1);
+      const elapsedSeconds = (Date.now() - start) / 1000;
+      const elapsedHours = elapsedSeconds / 3600;
+      const remainingSeconds = Math.max(0, TARGET_FAST_HOURS * 3600 - elapsedSeconds);
+      const progress = Math.min(elapsedHours / TARGET_FAST_HOURS, 1);
       const percent = Math.round(progress * 100);
-      const remaining = Math.max(0, 20 - diffHours);
 
-      document.getElementById("fastHours").textContent = `${diffHours.toFixed(1)}h`;
-      document.getElementById("fastStatus").textContent =
-        progress >= 1 ? "Obiettivo raggiunto" : "Sei in pieno controllo";
-      document.getElementById("ringPercent").textContent = `${percent}%`;
-      document.getElementById("fastCountdown").textContent =
-        progress >= 1 ? "finestra completata" : `${remaining.toFixed(1)}h rimanenti`;
-      document.getElementById("fastBar").style.width = `${percent}%`;
-
-      const offset = circumference * (1 - progress);
-      ring.style.strokeDashoffset = offset;
+      document.getElementById('fastTimeText').textContent = fmtHMS(elapsedSeconds);
+      document.getElementById('fastStatusText').textContent = progress >= 1 ? 'Obiettivo completato' : 'Stai andando bene';
+      document.getElementById('fastPercent').textContent = `${percent}%`;
+      document.getElementById('fastRemaining').textContent = progress >= 1 ? 'finestra completata' : `${fmtHMS(remainingSeconds)} rimanenti`;
+      document.getElementById('fastBar').style.width = `${percent}%`;
+      ring.style.strokeDashoffset = circumference * (1 - progress);
     }
 
     function updateGoalsAndScore() {
-      const water = getNumber(STORAGE_KEYS.water);
-      const smokes = getNumber(STORAGE_KEYS.smokes);
-      const calories = Number(document.getElementById("caloriesInput").value || localStorage.getItem(STORAGE_KEYS.calories) || 0);
-      const cardio = getBool(STORAGE_KEYS.cardio);
-      const weights = getBool(STORAGE_KEYS.weights);
+      const water = getNum(KEYS.water);
+      const smokes = getNum(KEYS.smokes);
+      const calories = Number(document.getElementById('caloriesInput').value || localStorage.getItem(KEYS.calories) || 0);
+      const workoutCount = (getBool(KEYS.cardio) ? 1 : 0) + (getBool(KEYS.weights) ? 1 : 0);
 
-      const workoutCount = (cardio ? 1 : 0) + (weights ? 1 : 0);
+      document.getElementById('goalWaterText').textContent = `${water.toFixed(2)} / ${TARGET_WATER.toFixed(1)} L`;
+      document.getElementById('goalWaterFill').style.width = `${Math.min((water / TARGET_WATER) * 100, 100)}%`;
 
-      const waterPct = Math.min((water / 2) * 100, 100);
-      document.getElementById("goalWaterText").textContent = `${water.toFixed(2)} / 2.0 L`;
-      document.getElementById("goalWaterFill").style.width = `${waterPct}%`;
+      document.getElementById('goalCaloriesText').textContent = `${calories || 0} / ${TARGET_CALORIES}`;
+      document.getElementById('goalCaloriesFill').style.width = `${Math.min((Math.max(calories, 0) / TARGET_CALORIES) * 100, 100)}%`;
 
-      let caloriesPct = 0;
-      let caloriesText = "inserisci calorie";
-      if (calories > 0) {
-        const min = 1400;
-        const max = 1700;
-        if (calories >= min && calories <= max) {
-          caloriesPct = 100;
-        } else if (calories < min) {
-          caloriesPct = Math.max(15, (calories / min) * 100);
-        } else {
-          caloriesPct = Math.max(15, (max / calories) * 100);
-        }
-        caloriesText = `${calories} kcal`;
-      }
-      document.getElementById("goalCaloriesText").textContent = caloriesText;
-      document.getElementById("goalCaloriesFill").style.width = `${Math.min(caloriesPct, 100)}%`;
+      document.getElementById('goalSmokesText').textContent = `${smokes} / ${MAX_SMOKES} max`;
+      document.getElementById('goalSmokesFill').style.width = `${Math.max(0, Math.min(((MAX_SMOKES - smokes) / MAX_SMOKES) * 100, 100))}%`;
 
-      const smokePct = Math.max(0, Math.min(((5 - smokes) / 5) * 100, 100));
-      document.getElementById("goalSmokesText").textContent = `${smokes} / 5 max`;
-      document.getElementById("goalSmokesFill").style.width = `${smokePct}%`;
-
-      const workoutPct = (workoutCount / 2) * 100;
-      document.getElementById("goalWorkoutText").textContent = `${workoutCount} / 2 attività`;
-      document.getElementById("goalWorkoutFill").style.width = `${workoutPct}%`;
+      document.getElementById('goalWorkoutText').textContent = `${workoutCount} / 2`;
+      document.getElementById('goalWorkoutFill').style.width = `${(workoutCount / 2) * 100}%`;
 
       let score = 0;
-      if (water >= 2) score += 25;
-      if (calories >= 1400 && calories <= 1700) score += 25;
-      if (smokes <= 5) score += 25;
+      if (water >= TARGET_WATER) score += 25;
+      if (calories >= 1600 && calories <= 1800) score += 25;
+      if (smokes <= MAX_SMOKES) score += 25;
       if (workoutCount >= 1) score += 12;
       if (workoutCount === 2) score += 13;
 
-      localStorage.setItem(STORAGE_KEYS.score, score);
-      document.getElementById("scoreValue").textContent = score;
-
-      updateMotivation(score, water, smokes, workoutCount, calories);
-    }
-
-    function updateMotivation(score, water, smokes, workoutCount, calories) {
-      const messages = [];
-
-      if (score >= 85) messages.push("Giornata eccellente: stai costruendo una routine forte e sostenibile.");
-      if (score >= 60 && score < 85) messages.push("Stai andando bene: con un piccolo sforzo in più chiudi la giornata in ottimo modo.");
-      if (score < 60) messages.push("Non serve perfezione: punta a sistemare una sola cosa per volta e continua.");
-
-      if (water < 2) messages.push("Un po’ più di acqua oggi ti aiuterà anche con fame e lucidità.");
-      if (smokes > 5) messages.push("Ridurre anche di poco le sigarette migliora respiro, energia e allenamento.");
-      if (workoutCount === 0) messages.push("Anche solo 15–20 minuti di movimento oggi contano davvero.");
-      if (calories > 0 && calories < 1400) messages.push("Non tagliare troppo: dimagrire meglio è più importante che dimagrire in fretta.");
-
-      const text = messages[0] || "Costanza batte intensità. Continua così.";
-      document.getElementById("motivationText").textContent = text;
+      localStorage.setItem(KEYS.score, String(score));
+      document.getElementById('scoreValue').textContent = score;
     }
 
     function saveDay() {
-      const weight = document.getElementById("weightInput").value;
-      const calories = document.getElementById("caloriesInput").value;
-      const energy = document.getElementById("energyInput").value;
+      const weight = document.getElementById('weightInput').value;
+      const calories = document.getElementById('caloriesInput').value;
+      const energy = document.getElementById('energyInput').value;
       const today = getTodayKey();
 
-      if (calories) localStorage.setItem(STORAGE_KEYS.calories, calories);
-      if (energy) localStorage.setItem(STORAGE_KEYS.energy, energy);
+      if (calories) localStorage.setItem(KEYS.calories, calories);
+      localStorage.setItem(KEYS.energy, energy);
 
       if (weight) {
-        const history = getWeightsHistory();
-        const existingIndex = history.findIndex(item => item.date === today);
+        const list = getWeightsHistory();
         const entry = { date: today, value: Number(weight) };
-
-        if (existingIndex >= 0) history[existingIndex] = entry;
-        else history.push(entry);
-
-        history.sort((a, b) => a.date.localeCompare(b.date));
-        saveWeightsHistory(history);
+        const idx = list.findIndex(x => x.date === today);
+        if (idx >= 0) list[idx] = entry; else list.push(entry);
+        list.sort((a, b) => a.date.localeCompare(b.date));
+        saveWeightsHistory(list);
       }
 
-      const score = Number(localStorage.getItem(STORAGE_KEYS.score) || 0);
-      const previousDate = localStorage.getItem(STORAGE_KEYS.lastSavedDate);
-      let streak = Number(localStorage.getItem(STORAGE_KEYS.streak) || 0);
+      const score = Number(localStorage.getItem(KEYS.score) || 0);
+      const lastDate = localStorage.getItem(KEYS.lastSavedDate);
+      let streak = Number(localStorage.getItem(KEYS.streak) || 0);
 
       if (score >= 60) {
-        if (previousDate === today) {
-          // stesso giorno, non cambiare streak
-        } else {
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-          const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,"0")}-${String(yesterday.getDate()).padStart(2,"0")}`;
-
-          streak = previousDate === yKey ? streak + 1 : 1;
-          localStorage.setItem(STORAGE_KEYS.streak, streak);
-          localStorage.setItem(STORAGE_KEYS.lastSavedDate, today);
+        if (lastDate !== today) {
+          const y = getTodayKey(-1);
+          streak = lastDate === y ? streak + 1 : 1;
+          localStorage.setItem(KEYS.streak, String(streak));
+          localStorage.setItem(KEYS.lastSavedDate, today);
         }
       }
 
-      renderHistoryChart();
       renderStreak();
       updateGoalsAndScore();
-      showToast("Giornata salvata");
+      showToast('Giornata salvata');
     }
 
     function renderStreak() {
-      document.getElementById("streakValue").textContent = Number(localStorage.getItem(STORAGE_KEYS.streak) || 0);
+      document.getElementById('streakValue').textContent = localStorage.getItem(KEYS.streak) || '0';
     }
 
-    function renderInputsFromStorage() {
-      const calories = localStorage.getItem(STORAGE_KEYS.calories) || "";
-      const energy = localStorage.getItem(STORAGE_KEYS.energy) || "5";
+    function renderInputs() {
+      document.getElementById('caloriesInput').value = localStorage.getItem(KEYS.calories) || '';
+      document.getElementById('energyInput').value = localStorage.getItem(KEYS.energy) || '5';
+      document.getElementById('energyLabel').textContent = `${document.getElementById('energyInput').value}/10`;
 
-      document.getElementById("caloriesInput").value = calories;
-      document.getElementById("energyInput").value = energy;
-      updateEnergyLabel();
-
-      const history = getWeightsHistory();
-      const today = getTodayKey();
-      const todayWeight = history.find(item => item.date === today);
-      document.getElementById("weightInput").value = todayWeight ? todayWeight.value : "";
+      const todayWeight = getWeightsHistory().find(x => x.date === getTodayKey());
+      document.getElementById('weightInput').value = todayWeight ? todayWeight.value : '';
+      document.getElementById('firstNameInput').value = localStorage.getItem(KEYS.firstName) || '';
+      document.getElementById('lastNameInput').value = localStorage.getItem(KEYS.lastName) || '';
     }
 
-    function renderHistoryChart() {
-      const history = getWeightsHistory().slice(-10);
-      const ctx = document.getElementById("weightChart").getContext("2d");
+    function saveProfile() {
+      localStorage.setItem(KEYS.firstName, document.getElementById('firstNameInput').value.trim());
+      localStorage.setItem(KEYS.lastName, document.getElementById('lastNameInput').value.trim());
+      personalizeTexts();
+      showToast('Profilo aggiornato');
+    }
 
-      const labels = history.map(item => item.date.slice(5));
-      const values = history.map(item => item.value);
+    function addMeal() {
+      const type = document.getElementById('mealType').value;
+      const text = document.getElementById('mealText').value.trim();
+      const calories = document.getElementById('mealCalories').value.trim();
+      if (!text) {
+        showToast('Scrivi cosa hai mangiato');
+        return;
+      }
 
-      if (chart) chart.destroy();
+      const meals = getMeals();
+      meals.unshift({
+        id: Date.now(),
+        date: getTodayKey(),
+        time: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
+        type,
+        text,
+        calories: calories || ''
+      });
+      saveMeals(meals);
 
-      chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [{
-            data: values,
-            tension: 0.35,
-            fill: true,
-            borderWidth: 3,
-            borderColor: "#3ddc97",
-            backgroundColor: "rgba(61, 220, 151, 0.14)",
-            pointRadius: 4,
-            pointHoverRadius: 4,
-            pointBackgroundColor: "#5ac8fa",
-            pointBorderColor: "#5ac8fa"
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: "rgba(10,14,20,0.95)",
-              borderColor: "rgba(255,255,255,0.08)",
-              borderWidth: 1,
-              displayColors: false
-            }
-          },
-          scales: {
-            x: {
-              ticks: { color: "#9aa4b2" },
-              grid: { color: "rgba(255,255,255,0.04)" }
-            },
-            y: {
-              ticks: { color: "#9aa4b2" },
-              grid: { color: "rgba(255,255,255,0.04)" }
+      document.getElementById('mealText').value = '';
+      document.getElementById('mealCalories').value = '';
+      renderMeals();
+      showToast('Pasto aggiunto');
+    }
+
+    function setMealsView(view) {
+      mealsView = view;
+      document.getElementById('todayMealsBtn').classList.toggle('active', view === 'today');
+      document.getElementById('yesterdayMealsBtn').classList.toggle('active', view === 'yesterday');
+      renderMeals();
+    }
+
+    function renderMeals() {
+      const targetDate = mealsView === 'today' ? getTodayKey() : getTodayKey(-1);
+      const meals = getMeals().filter(m => m.date === targetDate);
+      const wrap = document.getElementById('mealsList');
+
+      if (!meals.length) {
+        wrap.innerHTML = `<div class="list-item"><h4>Nessun pasto registrato</h4><p>${mealsView === 'today' ? 'Per oggi non hai ancora scritto nulla.' : 'Ieri non risulta nessun promemoria alimentare.'}</p></div>`;
+        return;
+      }
+
+      wrap.innerHTML = meals.map(meal => `
+        <div class="list-item">
+          <h4>${meal.type}</h4>
+          <p>${escapeHtml(meal.text)}</p>
+          <div class="meta">${meal.date} · ${meal.time}${meal.calories ? ` · ${meal.calories} kcal` : ''}</div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function startWorkoutTimer() {
+      if (workoutInterval) return;
+      workoutInterval = setInterval(() => {
+        workoutElapsed += 1;
+        localStorage.setItem(KEYS.workoutElapsed, String(workoutElapsed));
+        renderWorkoutTimer();
+      }, 1000);
+      showToast('Timer allenamento avviato');
+    }
+
+    function stopWorkoutTimer() {
+      clearInterval(workoutInterval);
+      workoutInterval = null;
+      showToast('Timer allenamento fermato');
+    }
+
+    function resetWorkoutTimer() {
+      stopWorkoutTimer();
+      workoutElapsed = 0;
+      localStorage.setItem(KEYS.workoutElapsed, '0');
+      renderWorkoutTimer();
+      showToast('Timer allenamento azzerato');
+    }
+
+    function renderWorkoutTimer() {
+      const total = Math.floor(workoutElapsed);
+      const mm = String(Math.floor(total / 60)).padStart(2, '0');
+      const ss = String(total % 60).padStart(2, '0');
+      document.getElementById('workoutTimerText').textContent = `${mm}:${ss}`;
+    }
+
+    function haversineMeters(lat1, lon1, lat2, lon2) {
+      const toRad = deg => (deg * Math.PI) / 180;
+      const R = 6371000;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(a));
+    }
+
+    function renderSteps() {
+      const steps = Math.floor(trackedDistanceM / AVG_STEP_LENGTH_M);
+      document.getElementById('stepsText').textContent = steps.toLocaleString('it-IT');
+      document.getElementById('distanceText').textContent = `${(trackedDistanceM / 1000).toFixed(2)} km tracciati`;
+    }
+
+    function startStepTracking() {
+      if (!('geolocation' in navigator)) {
+        showToast('Geolocalizzazione non supportata');
+        return;
+      }
+      if (geoWatchId !== null) return;
+
+      geoWatchId = navigator.geolocation.watchPosition(
+        position => {
+          const current = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          };
+          if (current.accuracy > 35) return;
+          if (lastPosition) {
+            const d = haversineMeters(lastPosition.lat, lastPosition.lon, current.lat, current.lon);
+            if (d > 1 && d < 100) {
+              trackedDistanceM += d;
+              localStorage.setItem(KEYS.stepsDistanceM, String(trackedDistanceM));
+              renderSteps();
             }
           }
-        }
-      });
+          lastPosition = current;
+        },
+        () => showToast('Permesso posizione negato o non disponibile'),
+        { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+      );
+      showToast('Tracciamento passi avviato');
+    }
+
+    function stopStepTracking() {
+      if (geoWatchId !== null) navigator.geolocation.clearWatch(geoWatchId);
+      geoWatchId = null;
+      lastPosition = null;
+      showToast('Tracciamento passi fermato');
     }
 
     function init() {
-      updateToday();
+      document.getElementById('todayText').textContent = formatItalianDate();
       renderQuickValues();
-      renderInputsFromStorage();
+      renderInputs();
+      renderHabitButtons();
       renderStreak();
-      updateHabitButtons();
+      personalizeTexts();
       updateFastUI();
       updateGoalsAndScore();
-      renderHistoryChart();
+      renderWorkoutTimer();
+      renderSteps();
+      renderMeals();
 
-      document.getElementById("energyInput").addEventListener("input", updateEnergyLabel);
+      document.getElementById('energyInput').addEventListener('input', e => {
+        document.getElementById('energyLabel').textContent = `${e.target.value}/10`;
+      });
+      document.getElementById('caloriesInput').addEventListener('input', updateGoalsAndScore);
 
-      setInterval(updateFastUI, 30000);
+      setInterval(updateFastUI, 1000);
     }
 
     init();
